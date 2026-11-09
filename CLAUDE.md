@@ -20,7 +20,6 @@
 - `docs/api_spec.md`: API 목록 (작성 중)
 - `docs/erd.md`: ERD (작성 중). 엔티티 바꾸면 같이 고치기
 - `docs/decisions.md`: 명세에서 바뀐 것, 회의에서 정한 것
-- `docs/demo.html`: 시연용 데모 앱. 크고 대부분 화면 코드라 꼭 필요할 때만 열기
 - `src/main/resources/seed/`: 가이드·회의 도우미 데이터와 시연용 예시 데이터. 설명은 `seed/README.md`
 - 세부 규칙이 문서에도 없으면 추측하지 말고 물어보기
 
