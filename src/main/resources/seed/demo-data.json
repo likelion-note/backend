@@ -1,0 +1,1438 @@
+{
+  "note": "시연용 예시 데이터. ref는 파일 안에서 서로 연결하는 키이고 DB id가 아니에요. 데모 기준 오늘 날짜는 2026-10-27",
+  "demoToday": "2026-10-27",
+  "projects": [
+    {
+      "ref": "p1",
+      "title": "14기 해커톤 · 멋사수첩팀",
+      "kind": "TEAM",
+      "cohort": 14,
+      "teamLetter": "A"
+    },
+    {
+      "ref": "p2",
+      "title": "14기 해커톤 · 모아팀",
+      "kind": "TEAM",
+      "cohort": 14,
+      "teamLetter": "B"
+    },
+    {
+      "ref": "p3",
+      "title": "14기 해커톤 · 학식팀",
+      "kind": "TEAM",
+      "cohort": 14,
+      "teamLetter": "C"
+    },
+    {
+      "ref": "p4",
+      "title": "14기 아이디어톤 · 6조",
+      "kind": "TEAM",
+      "cohort": 14,
+      "teamLetter": "D"
+    },
+    {
+      "ref": "ops1",
+      "title": "14기 운영 · 정기 세션",
+      "kind": "OPS",
+      "cohort": 14,
+      "teamLetter": null
+    },
+    {
+      "ref": "ops2",
+      "title": "14기 운영 · 중앙 해커톤",
+      "kind": "OPS",
+      "cohort": 14,
+      "teamLetter": null
+    },
+    {
+      "ref": "c13-A",
+      "title": "13기 해커톤 · A팀",
+      "kind": "TEAM",
+      "cohort": 13,
+      "teamLetter": "A"
+    },
+    {
+      "ref": "c13-B",
+      "title": "13기 해커톤 · B팀",
+      "kind": "TEAM",
+      "cohort": 13,
+      "teamLetter": "B"
+    },
+    {
+      "ref": "c13-C",
+      "title": "13기 해커톤 · C팀",
+      "kind": "TEAM",
+      "cohort": 13,
+      "teamLetter": "C"
+    },
+    {
+      "ref": "c13-D",
+      "title": "13기 해커톤 · D팀",
+      "kind": "TEAM",
+      "cohort": 13,
+      "teamLetter": "D"
+    },
+    {
+      "ref": "c13-E",
+      "title": "13기 해커톤 · E팀",
+      "kind": "TEAM",
+      "cohort": 13,
+      "teamLetter": "E"
+    },
+    {
+      "ref": "c13-F",
+      "title": "13기 해커톤 · F팀",
+      "kind": "TEAM",
+      "cohort": 13,
+      "teamLetter": "F"
+    }
+  ],
+  "users": [
+    {
+      "ref": "u1",
+      "type": "MEMBER",
+      "cohort": 14,
+      "name": "데옹",
+      "email": "u1@demo.likelion",
+      "googleSub": "demo-u1",
+      "part": "PM",
+      "currentProjectRef": "p1",
+      "projectHistoryRefs": [
+        "p4",
+        "p1"
+      ]
+    },
+    {
+      "ref": "u2",
+      "type": "MEMBER",
+      "cohort": 14,
+      "name": "민수",
+      "email": "u2@demo.likelion",
+      "googleSub": "demo-u2",
+      "part": "FRONTEND",
+      "currentProjectRef": "p1",
+      "projectHistoryRefs": [
+        "p1"
+      ]
+    },
+    {
+      "ref": "u3",
+      "type": "MEMBER",
+      "cohort": 14,
+      "name": "서연",
+      "email": "u3@demo.likelion",
+      "googleSub": "demo-u3",
+      "part": "DESIGN",
+      "currentProjectRef": "p1",
+      "projectHistoryRefs": [
+        "p1"
+      ]
+    },
+    {
+      "ref": "u4",
+      "type": "MEMBER",
+      "cohort": 14,
+      "name": "지원",
+      "email": "u4@demo.likelion",
+      "googleSub": "demo-u4",
+      "part": "BACKEND",
+      "currentProjectRef": "p1",
+      "projectHistoryRefs": [
+        "p1"
+      ]
+    },
+    {
+      "ref": "u5",
+      "type": "MEMBER",
+      "cohort": 14,
+      "name": "도윤",
+      "email": "u5@demo.likelion",
+      "googleSub": "demo-u5",
+      "part": "PM",
+      "currentProjectRef": "p2",
+      "projectHistoryRefs": [
+        "p2"
+      ]
+    },
+    {
+      "ref": "u6",
+      "type": "MEMBER",
+      "cohort": 14,
+      "name": "하은",
+      "email": "u6@demo.likelion",
+      "googleSub": "demo-u6",
+      "part": "DESIGN",
+      "currentProjectRef": "p2",
+      "projectHistoryRefs": [
+        "p2"
+      ]
+    },
+    {
+      "ref": "u7",
+      "type": "MEMBER",
+      "cohort": 14,
+      "name": "준호",
+      "email": "u7@demo.likelion",
+      "googleSub": "demo-u7",
+      "part": "FRONTEND",
+      "currentProjectRef": "p2",
+      "projectHistoryRefs": [
+        "p2"
+      ]
+    },
+    {
+      "ref": "u8",
+      "type": "MEMBER",
+      "cohort": 14,
+      "name": "유나",
+      "email": "u8@demo.likelion",
+      "googleSub": "demo-u8",
+      "part": "BACKEND",
+      "currentProjectRef": "p2",
+      "projectHistoryRefs": [
+        "p2"
+      ]
+    },
+    {
+      "ref": "u9",
+      "type": "MEMBER",
+      "cohort": 14,
+      "name": "시우",
+      "email": "u9@demo.likelion",
+      "googleSub": "demo-u9",
+      "part": "PM",
+      "currentProjectRef": "p3",
+      "projectHistoryRefs": [
+        "p3"
+      ]
+    },
+    {
+      "ref": "u10",
+      "type": "MEMBER",
+      "cohort": 14,
+      "name": "예린",
+      "email": "u10@demo.likelion",
+      "googleSub": "demo-u10",
+      "part": "FRONTEND",
+      "currentProjectRef": "p3",
+      "projectHistoryRefs": [
+        "p3"
+      ]
+    },
+    {
+      "ref": "u11",
+      "type": "MEMBER",
+      "cohort": 14,
+      "name": "태민",
+      "email": "u11@demo.likelion",
+      "googleSub": "demo-u11",
+      "part": null,
+      "currentProjectRef": null,
+      "projectHistoryRefs": []
+    },
+    {
+      "ref": "u12",
+      "type": "MEMBER",
+      "cohort": 14,
+      "name": "소희",
+      "email": "u12@demo.likelion",
+      "googleSub": "demo-u12",
+      "part": null,
+      "currentProjectRef": null,
+      "projectHistoryRefs": []
+    },
+    {
+      "ref": "op1",
+      "type": "ADMIN",
+      "cohort": 14,
+      "name": "하린",
+      "email": "op1@demo.likelion",
+      "googleSub": "demo-op1",
+      "part": "OPS",
+      "currentProjectRef": "ops1",
+      "projectHistoryRefs": [
+        "ops1",
+        "ops2"
+      ]
+    },
+    {
+      "ref": "op2",
+      "type": "ADMIN",
+      "cohort": 14,
+      "name": "건우",
+      "email": "op2@demo.likelion",
+      "googleSub": "demo-op2",
+      "part": "OPS",
+      "currentProjectRef": "ops2",
+      "projectHistoryRefs": [
+        "ops2"
+      ]
+    },
+    {
+      "ref": "c13-A",
+      "type": "MEMBER",
+      "cohort": 13,
+      "name": "13기 A팀 (시드)",
+      "email": "c13-A@demo.likelion",
+      "googleSub": "demo-c13-A",
+      "part": null,
+      "currentProjectRef": "c13-A",
+      "projectHistoryRefs": [
+        "c13-A"
+      ]
+    },
+    {
+      "ref": "c13-B",
+      "type": "MEMBER",
+      "cohort": 13,
+      "name": "13기 B팀 (시드)",
+      "email": "c13-B@demo.likelion",
+      "googleSub": "demo-c13-B",
+      "part": null,
+      "currentProjectRef": "c13-B",
+      "projectHistoryRefs": [
+        "c13-B"
+      ]
+    },
+    {
+      "ref": "c13-C",
+      "type": "MEMBER",
+      "cohort": 13,
+      "name": "13기 C팀 (시드)",
+      "email": "c13-C@demo.likelion",
+      "googleSub": "demo-c13-C",
+      "part": null,
+      "currentProjectRef": "c13-C",
+      "projectHistoryRefs": [
+        "c13-C"
+      ]
+    },
+    {
+      "ref": "c13-D",
+      "type": "MEMBER",
+      "cohort": 13,
+      "name": "13기 D팀 (시드)",
+      "email": "c13-D@demo.likelion",
+      "googleSub": "demo-c13-D",
+      "part": null,
+      "currentProjectRef": "c13-D",
+      "projectHistoryRefs": [
+        "c13-D"
+      ]
+    },
+    {
+      "ref": "c13-E",
+      "type": "MEMBER",
+      "cohort": 13,
+      "name": "13기 E팀 (시드)",
+      "email": "c13-E@demo.likelion",
+      "googleSub": "demo-c13-E",
+      "part": null,
+      "currentProjectRef": "c13-E",
+      "projectHistoryRefs": [
+        "c13-E"
+      ]
+    },
+    {
+      "ref": "c13-F",
+      "type": "MEMBER",
+      "cohort": 13,
+      "name": "13기 F팀 (시드)",
+      "email": "c13-F@demo.likelion",
+      "googleSub": "demo-c13-F",
+      "part": null,
+      "currentProjectRef": "c13-F",
+      "projectHistoryRefs": [
+        "c13-F"
+      ]
+    }
+  ],
+  "journals": [
+    {
+      "ref": "n1",
+      "authorRef": "c13-B",
+      "projectRef": "c13-B",
+      "cohort": 13,
+      "part": "PM",
+      "activity": "MIDTERM",
+      "timing": "MID",
+      "scope": "NEXT",
+      "status": "APPROVED",
+      "date": "2025-10-20",
+      "raw": {
+        "stuck": "중간발표 2주 전에 지금 주제로는 6주 안에 보여줄 게 없다는 걸 알았어요. 바꾸자고 하면 팀원들이 지칠까 봐 일주일을 그냥 보냈어요.",
+        "solved": "팀원들한테 먼저 공유한 건 왜 바꾸는지 적은 한 장짜리 메모였어요. 남길 것과 버릴 것을 표로 나눠 보여주니 반대보다 질문이 먼저 나왔고, 그날 바로 새 주제로 정했어요.",
+        "again": "주제가 불안하다는 느낌이 들면 그 주 회의에서 바로 꺼낼 거예요. 일주일 미룬 게 제일 아까웠어요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "주제를 중간에 바꿨던 3주차 이야기",
+        "body": {
+          "stuck": "중간발표 2주 전에 지금 주제로는 6주 안에 보여줄 게 없다는 걸 알았어요. 바꾸자고 하면 팀원들이 지칠까 봐 일주일을 그냥 보냈어요.",
+          "solved": "팀원들한테 먼저 공유한 건 왜 바꾸는지 적은 한 장짜리 메모였어요. 남길 것과 버릴 것을 표로 나눠 보여주니 반대보다 질문이 먼저 나왔고, 그날 바로 새 주제로 정했어요.",
+          "again": "주제가 불안하다는 느낌이 들면 그 주 회의에서 바로 꺼낼 거예요. 일주일 미룬 게 제일 아까웠어요.",
+          "memo": ""
+        },
+        "category": "ROLE_GUIDE",
+        "tags": [
+          "TOPIC_CHANGE",
+          "PARTICIPATION"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 41,
+      "helpCount": 17
+    },
+    {
+      "ref": "n2",
+      "authorRef": "c13-D",
+      "projectRef": "c13-D",
+      "cohort": 13,
+      "part": "PM",
+      "activity": "SESSION",
+      "timing": "FAR",
+      "scope": "NEXT",
+      "status": "APPROVED",
+      "date": "2025-10-20",
+      "raw": {
+        "stuck": "매 회의가 2시간을 넘겼어요. 안건이 회의 중에 생기니까 이야기가 계속 옆으로 샜어요.",
+        "solved": "회의 시작 전에 안건을 슬랙에 먼저 올리기로 했더니 회의가 절반으로 줄었어요. 나머지 두 개는 60분 타이머, 결론이 안 나면 PM이 두 안으로 줄여서 투표하기였어요.",
+        "again": "첫 회의 때 이 규칙부터 정하고 시작할 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "회의가 계속 길어져서 정한 규칙 3가지",
+        "body": {
+          "stuck": "매 회의가 2시간을 넘겼어요. 안건이 회의 중에 생기니까 이야기가 계속 옆으로 샜어요.",
+          "solved": "회의 시작 전에 안건을 슬랙에 먼저 올리기로 했더니 회의가 절반으로 줄었어요. 나머지 두 개는 60분 타이머, 결론이 안 나면 PM이 두 안으로 줄여서 투표하기였어요.",
+          "again": "첫 회의 때 이 규칙부터 정하고 시작할 거예요.",
+          "memo": ""
+        },
+        "category": "MEETING",
+        "tags": [
+          "MEETING_RUN",
+          "CONFLICT"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 33,
+      "helpCount": 21
+    },
+    {
+      "ref": "n3",
+      "authorRef": "c13-A",
+      "projectRef": "c13-A",
+      "cohort": 13,
+      "part": "PM",
+      "activity": "HACKATHON",
+      "timing": "FAR",
+      "scope": "NEXT",
+      "status": "APPROVED",
+      "date": "2025-10-20",
+      "raw": {
+        "stuck": "\"로그인 넣어주세요\"만 썼다가 개발자에게 질문을 열 개 받았어요. 다 정했다고 생각했는데 화면마다 빠진 게 많았어요.",
+        "solved": "개발자랑 같이 앉아서 화면마다 보여줄 정보, 없을 때 보여줄 화면, 실패했을 때 문구를 채웠어요. 그 표를 기획서 맨 앞에 붙였더니 그 뒤로 질문이 거의 안 왔어요.",
+        "again": "기획서를 쓰기 전에 개발자에게 꼭 필요한 항목부터 물어볼 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "개발자랑 기획서를 다시 쓴 날",
+        "body": {
+          "stuck": "\"로그인 넣어주세요\"만 썼다가 개발자에게 질문을 열 개 받았어요. 다 정했다고 생각했는데 화면마다 빠진 게 많았어요.",
+          "solved": "개발자랑 같이 앉아서 화면마다 보여줄 정보, 없을 때 보여줄 화면, 실패했을 때 문구를 채웠어요. 그 표를 기획서 맨 앞에 붙였더니 그 뒤로 질문이 거의 안 왔어요.",
+          "again": "기획서를 쓰기 전에 개발자에게 꼭 필요한 항목부터 물어볼 거예요.",
+          "memo": ""
+        },
+        "category": "COLLAB",
+        "tags": [
+          "PLAN_DEV",
+          "PLAN_DOC"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 27,
+      "helpCount": 14
+    },
+    {
+      "ref": "n4",
+      "authorRef": "c13-C",
+      "projectRef": "c13-C",
+      "cohort": 13,
+      "part": "DESIGN",
+      "activity": "MIDTERM",
+      "timing": "MID",
+      "scope": "NEXT",
+      "status": "APPROVED",
+      "date": "2025-10-20",
+      "raw": {
+        "stuck": "예쁜 화면부터 그렸더니 PM이랑 프론트가 볼 때마다 흐름이 바뀌었어요.",
+        "solved": "색을 다 빼고 회색 박스로 화면 흐름만 먼저 맞췄어요. 흐름에 다들 동의한 다음에 시안을 그리니까 수정이 확 줄었어요.",
+        "again": "첫 주에는 피그마에서 색 쓰는 걸 금지할 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "와이어프레임을 세 번 갈아엎은 이유",
+        "body": {
+          "stuck": "예쁜 화면부터 그렸더니 PM이랑 프론트가 볼 때마다 흐름이 바뀌었어요.",
+          "solved": "색을 다 빼고 회색 박스로 화면 흐름만 먼저 맞췄어요. 흐름에 다들 동의한 다음에 시안을 그리니까 수정이 확 줄었어요.",
+          "again": "첫 주에는 피그마에서 색 쓰는 걸 금지할 거예요.",
+          "memo": ""
+        },
+        "category": "ROLE_GUIDE",
+        "tags": [
+          "DESIGN_COLLAB",
+          "PLAN_DEV"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 22,
+      "helpCount": 9
+    },
+    {
+      "ref": "n5",
+      "authorRef": "c13-A",
+      "projectRef": "c13-A",
+      "cohort": 13,
+      "part": "FRONTEND",
+      "activity": "MIDTERM",
+      "timing": "MID",
+      "scope": "NEXT",
+      "status": "APPROVED",
+      "date": "2025-10-20",
+      "raw": {
+        "stuck": "일정이 급해서 디자인 시안이 나오기 전에 화면부터 만들었어요. 시안이 나오니 구조부터 달라서 거의 다시 짰어요.",
+        "solved": "그다음부터는 디자이너와 컴포넌트 이름 목록부터 맞췄어요. 버튼, 카드, 입력칸만 먼저 만들어 두니 시안이 바뀌어도 금방 따라갔어요.",
+        "again": "디자인을 기다리는 동안엔 공통 부품부터 만들 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "시안 없이 먼저 만들다 이틀을 날린 일",
+        "body": {
+          "stuck": "일정이 급해서 디자인 시안이 나오기 전에 화면부터 만들었어요. 시안이 나오니 구조부터 달라서 거의 다시 짰어요.",
+          "solved": "그다음부터는 디자이너와 컴포넌트 이름 목록부터 맞췄어요. 버튼, 카드, 입력칸만 먼저 만들어 두니 시안이 바뀌어도 금방 따라갔어요.",
+          "again": "디자인을 기다리는 동안엔 공통 부품부터 만들 거예요.",
+          "memo": ""
+        },
+        "category": "ROLE_GUIDE",
+        "tags": [
+          "DESIGN_COLLAB",
+          "DELAY"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 19,
+      "helpCount": 11
+    },
+    {
+      "ref": "n6",
+      "authorRef": "c13-E",
+      "projectRef": "c13-E",
+      "cohort": 13,
+      "part": "BACKEND",
+      "activity": "SESSION",
+      "timing": "FAR",
+      "scope": "NEXT",
+      "status": "APPROVED",
+      "date": "2025-10-20",
+      "raw": {
+        "stuck": "서버를 뭘로 할지 팀원 둘이 일주일 내내 의견이 갈렸어요.",
+        "solved": "기준을 \"둘 중 한 명이라도 써본 것\"으로 바꾸니 10분 만에 정해졌어요. 6주 프로젝트에서는 새로운 것보다 익숙한 게 이겼어요.",
+        "again": "고르는 기준부터 먼저 정할 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "기술 스택 고르다 일주일을 날린 이야기",
+        "body": {
+          "stuck": "서버를 뭘로 할지 팀원 둘이 일주일 내내 의견이 갈렸어요.",
+          "solved": "기준을 \"둘 중 한 명이라도 써본 것\"으로 바꾸니 10분 만에 정해졌어요. 6주 프로젝트에서는 새로운 것보다 익숙한 게 이겼어요.",
+          "again": "고르는 기준부터 먼저 정할 거예요.",
+          "memo": ""
+        },
+        "category": "ROLE_GUIDE",
+        "tags": [
+          "STACK",
+          "CONFLICT"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 24,
+      "helpCount": 13
+    },
+    {
+      "ref": "n7",
+      "authorRef": "c13-B",
+      "projectRef": "c13-B",
+      "cohort": 13,
+      "part": "BACKEND",
+      "activity": "HACKATHON",
+      "timing": "FAR",
+      "scope": "NEXT",
+      "status": "APPROVED",
+      "date": "2025-10-20",
+      "raw": {
+        "stuck": "프론트랑 말로만 맞추고 개발했더니 연동하는 날 필드 이름이 하나도 안 맞았어요.",
+        "solved": "노션에 API 표를 만들고 바꿀 때마다 슬랙에 알리기로 했어요. 연동은 그날 오후에 끝났어요.",
+        "again": "코드보다 명세 표를 먼저 쓸 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "API 명세 없이 시작했다가 생긴 일",
+        "body": {
+          "stuck": "프론트랑 말로만 맞추고 개발했더니 연동하는 날 필드 이름이 하나도 안 맞았어요.",
+          "solved": "노션에 API 표를 만들고 바꿀 때마다 슬랙에 알리기로 했어요. 연동은 그날 오후에 끝났어요.",
+          "again": "코드보다 명세 표를 먼저 쓸 거예요.",
+          "memo": ""
+        },
+        "category": "COLLAB",
+        "tags": [
+          "PLAN_DEV"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 18,
+      "helpCount": 10
+    },
+    {
+      "ref": "n8",
+      "authorRef": "c13-D",
+      "projectRef": "c13-D",
+      "cohort": 13,
+      "part": "FRONTEND",
+      "activity": "HACKATHON",
+      "timing": "WEEK",
+      "scope": "NEXT",
+      "status": "APPROVED",
+      "date": "2025-10-20",
+      "raw": {
+        "stuck": "새벽 2시에 서로 코드를 덮어써서 한 시간을 날렸어요.",
+        "solved": "기능마다 브랜치를 따고, 합치는 사람을 한 명으로 정했어요. 합치기 전에 슬랙에 한 줄 남기는 것만으로 충돌이 사라졌어요.",
+        "again": "해커톤 시작 전에 합치는 사람부터 정할 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "해커톤 밤샘 전에 정한 브랜치 규칙",
+        "body": {
+          "stuck": "새벽 2시에 서로 코드를 덮어써서 한 시간을 날렸어요.",
+          "solved": "기능마다 브랜치를 따고, 합치는 사람을 한 명으로 정했어요. 합치기 전에 슬랙에 한 줄 남기는 것만으로 충돌이 사라졌어요.",
+          "again": "해커톤 시작 전에 합치는 사람부터 정할 거예요.",
+          "memo": ""
+        },
+        "category": "ROLE_GUIDE",
+        "tags": [
+          "RELEASE",
+          "ROLE_SPLIT"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 15,
+      "helpCount": 8
+    },
+    {
+      "ref": "n9",
+      "authorRef": "c13-C",
+      "projectRef": "c13-C",
+      "cohort": 13,
+      "part": "PM",
+      "activity": "SESSION",
+      "timing": "FAR",
+      "scope": "NEXT",
+      "status": "APPROVED",
+      "date": "2025-10-20",
+      "raw": {
+        "stuck": "아이디어는 계속 나오는데 하나로 안 모였어요. 다들 자기 아이디어를 놓기 싫어했어요.",
+        "solved": "아이디어마다 누구의 어떤 불편인지 한 줄로 쓰게 했어요. 한 줄로 못 쓰는 건 자연스럽게 빠졌고, 남은 세 개 중에 투표했어요.",
+        "again": "아이디어를 내는 시간과 고르는 시간을 처음부터 나눌 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "아이디어 회의 90분째 결론이 안 날 때",
+        "body": {
+          "stuck": "아이디어는 계속 나오는데 하나로 안 모였어요. 다들 자기 아이디어를 놓기 싫어했어요.",
+          "solved": "아이디어마다 누구의 어떤 불편인지 한 줄로 쓰게 했어요. 한 줄로 못 쓰는 건 자연스럽게 빠졌고, 남은 세 개 중에 투표했어요.",
+          "again": "아이디어를 내는 시간과 고르는 시간을 처음부터 나눌 거예요.",
+          "memo": ""
+        },
+        "category": "MEETING",
+        "tags": [
+          "MEETING_RUN",
+          "TOPIC_PICK"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 29,
+      "helpCount": 18
+    },
+    {
+      "ref": "n10",
+      "authorRef": "c13-E",
+      "projectRef": "c13-E",
+      "cohort": 13,
+      "part": "DESIGN",
+      "activity": "DEMODAY",
+      "timing": "WEEK",
+      "scope": "NEXT",
+      "status": "APPROVED",
+      "date": "2025-10-20",
+      "raw": {
+        "stuck": "리허설에서 심사위원 역할을 한 친구가 \"그래서 뭐가 좋은데?\"라고 물었어요.",
+        "solved": "기능 목록 화면을 빼고 사용자 한 명의 하루로 화면 순서를 다시 짰어요.",
+        "again": "발표 화면은 기능이 아니라 장면 순서로 짤 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "데모데이 하루 전에 발표 화면을 바꾼 것",
+        "body": {
+          "stuck": "리허설에서 심사위원 역할을 한 친구가 \"그래서 뭐가 좋은데?\"라고 물었어요.",
+          "solved": "기능 목록 화면을 빼고 사용자 한 명의 하루로 화면 순서를 다시 짰어요.",
+          "again": "발표 화면은 기능이 아니라 장면 순서로 짤 거예요.",
+          "memo": ""
+        },
+        "category": "ROLE_GUIDE",
+        "tags": [
+          "RELEASE"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 21,
+      "helpCount": 12
+    },
+    {
+      "ref": "n11",
+      "authorRef": "c13-A",
+      "projectRef": "c13-A",
+      "cohort": 13,
+      "part": "PM",
+      "activity": "SESSION",
+      "timing": "FAR",
+      "scope": "NEXT",
+      "status": "APPROVED",
+      "date": "2025-10-20",
+      "raw": {
+        "stuck": "회의 때마다 PM이랑 한 명만 말하고 나머지는 듣기만 했어요.",
+        "solved": "회의 시작 3분 동안 각자 포스트잇에 먼저 쓰고 돌아가며 읽게 했어요. 말 안 하던 팀원 의견이 그날 주제로 뽑혔어요.",
+        "again": "의견은 말보다 쓰기로 먼저 받을 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "몇 명만 말하던 회의를 바꾼 방법",
+        "body": {
+          "stuck": "회의 때마다 PM이랑 한 명만 말하고 나머지는 듣기만 했어요.",
+          "solved": "회의 시작 3분 동안 각자 포스트잇에 먼저 쓰고 돌아가며 읽게 했어요. 말 안 하던 팀원 의견이 그날 주제로 뽑혔어요.",
+          "again": "의견은 말보다 쓰기로 먼저 받을 거예요.",
+          "memo": ""
+        },
+        "category": "MEETING",
+        "tags": [
+          "MEETING_RUN",
+          "PARTICIPATION"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 26,
+      "helpCount": 16
+    },
+    {
+      "ref": "n12",
+      "authorRef": "c13-D",
+      "projectRef": "c13-D",
+      "cohort": 13,
+      "part": "BACKEND",
+      "activity": "DEMODAY",
+      "timing": "MID",
+      "scope": "NEXT",
+      "status": "APPROVED",
+      "date": "2025-10-20",
+      "raw": {
+        "stuck": "데모데이 전날 처음 배포했더니 환경 설정이 달라서 서버가 안 떴어요.",
+        "solved": "밤새 고치고 나서 배포 체크리스트를 만들었어요. 다음 기수에게 남기는 것도 그 체크리스트예요.",
+        "again": "2주 전에 한 번 배포해 볼 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "배포 전날 터진 문제와 체크리스트",
+        "body": {
+          "stuck": "데모데이 전날 처음 배포했더니 환경 설정이 달라서 서버가 안 떴어요.",
+          "solved": "밤새 고치고 나서 배포 체크리스트를 만들었어요. 다음 기수에게 남기는 것도 그 체크리스트예요.",
+          "again": "2주 전에 한 번 배포해 볼 거예요.",
+          "memo": ""
+        },
+        "category": "ROLE_GUIDE",
+        "tags": [
+          "RELEASE",
+          "DELAY"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 17,
+      "helpCount": 9
+    },
+    {
+      "ref": "n13",
+      "authorRef": "c13-F",
+      "projectRef": "c13-F",
+      "cohort": 13,
+      "part": "PM",
+      "activity": "HACKATHON",
+      "timing": "WEEK",
+      "scope": "NEXT",
+      "status": "APPROVED",
+      "date": "2025-10-20",
+      "raw": {
+        "stuck": "해커톤 전날 보니 기능 하나에 세 명이 몰려 있었고 발표 준비는 아무도 안 맡고 있었어요.",
+        "solved": "기능 목록 옆에 이름을 하나씩만 붙이고, 이름이 두 개 붙은 건 다시 나눴어요. 발표는 제가 맡고 개발에서 빠졌어요.",
+        "again": "해커톤 일주일 전에 역할표를 한 번 더 볼 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "해커톤 전날 역할을 다시 나눈 이유",
+        "body": {
+          "stuck": "해커톤 전날 보니 기능 하나에 세 명이 몰려 있었고 발표 준비는 아무도 안 맡고 있었어요.",
+          "solved": "기능 목록 옆에 이름을 하나씩만 붙이고, 이름이 두 개 붙은 건 다시 나눴어요. 발표는 제가 맡고 개발에서 빠졌어요.",
+          "again": "해커톤 일주일 전에 역할표를 한 번 더 볼 거예요.",
+          "memo": ""
+        },
+        "category": "ROLE_GUIDE",
+        "tags": [
+          "ROLE_SPLIT",
+          "DELAY"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 38,
+      "helpCount": 12
+    },
+    {
+      "ref": "n14",
+      "authorRef": "c13-F",
+      "projectRef": "c13-F",
+      "cohort": 13,
+      "part": "PM",
+      "activity": "MIDTERM",
+      "timing": "MID",
+      "scope": "NEXT",
+      "status": "APPROVED",
+      "date": "2025-10-20",
+      "raw": {
+        "stuck": "처음 만든 덱이 14장이었는데 리허설에서 5분을 넘겼어요.",
+        "solved": "문제, 우리가 만든 것, 다음 계획 세 장만 남기고 나머지는 부록으로 뺐어요. 질문이 오히려 더 많이 들어왔어요.",
+        "again": "덱은 3장짜리 뼈대부터 만들고 살을 붙일 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "중간발표 덱을 3장으로 줄인 날",
+        "body": {
+          "stuck": "처음 만든 덱이 14장이었는데 리허설에서 5분을 넘겼어요.",
+          "solved": "문제, 우리가 만든 것, 다음 계획 세 장만 남기고 나머지는 부록으로 뺐어요. 질문이 오히려 더 많이 들어왔어요.",
+          "again": "덱은 3장짜리 뼈대부터 만들고 살을 붙일 거예요.",
+          "memo": ""
+        },
+        "category": "ROLE_GUIDE",
+        "tags": [
+          "RELEASE",
+          "PLAN_DOC"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 52,
+      "helpCount": 19
+    },
+    {
+      "ref": "n15",
+      "authorRef": "c13-B",
+      "projectRef": "c13-B",
+      "cohort": 13,
+      "part": "OPS",
+      "activity": "SESSION",
+      "timing": "FAR",
+      "scope": "NEXT",
+      "status": "APPROVED",
+      "date": "2025-10-20",
+      "raw": {
+        "stuck": "3주차부터 정기 세션 출석이 절반으로 줄었어요. 공지를 더 보내도 달라지지 않았어요.",
+        "solved": "세션 마지막 10분을 팀별 질문 시간으로 바꾸고, 질문을 하루 전에 미리 받았어요. 다음 주 출석이 다시 올랐어요.",
+        "again": "질문 시간을 처음부터 세션에 넣을 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "세션 출석이 절반으로 줄었을 때",
+        "body": {
+          "stuck": "3주차부터 정기 세션 출석이 절반으로 줄었어요. 공지를 더 보내도 달라지지 않았어요.",
+          "solved": "세션 마지막 10분을 팀별 질문 시간으로 바꾸고, 질문을 하루 전에 미리 받았어요. 다음 주 출석이 다시 올랐어요.",
+          "again": "질문 시간을 처음부터 세션에 넣을 거예요.",
+          "memo": ""
+        },
+        "category": "ROLE_GUIDE",
+        "tags": [
+          "PARTICIPATION"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 11,
+      "helpCount": 6
+    },
+    {
+      "ref": "o1",
+      "authorRef": "u5",
+      "projectRef": "p2",
+      "cohort": 14,
+      "part": "PM",
+      "activity": "SESSION",
+      "timing": "FAR",
+      "scope": "NOW",
+      "status": "APPROVED",
+      "date": "2026-10-22",
+      "raw": {
+        "stuck": "첫 아이디어 회의가 2시간 넘게 이어졌는데 결론이 하나도 안 났어요. 다들 지쳐서 다음 회의 날짜도 못 정했어요.",
+        "solved": "두 번째 회의부터 30분 타이머를 켜고, 끝나기 5분 전에는 무조건 정한 것만 적었어요. 못 정한 건 다음 회의 첫 안건으로 넘겼어요.",
+        "again": "첫 회의부터 타이머를 켤 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "아이디어 회의를 30분으로 끊은 방법",
+        "body": {
+          "stuck": "첫 아이디어 회의가 2시간 넘게 이어졌는데 결론이 하나도 안 났어요. 다들 지쳐서 다음 회의 날짜도 못 정했어요.",
+          "solved": "두 번째 회의부터 30분 타이머를 켜고, 끝나기 5분 전에는 무조건 정한 것만 적었어요. 못 정한 건 다음 회의 첫 안건으로 넘겼어요.",
+          "again": "첫 회의부터 타이머를 켤 거예요.",
+          "memo": ""
+        },
+        "category": "MEETING",
+        "tags": [
+          "MEETING_RUN",
+          "TOPIC_PICK"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 9,
+      "helpCount": 4
+    },
+    {
+      "ref": "o2",
+      "authorRef": "u7",
+      "projectRef": "p2",
+      "cohort": 14,
+      "part": "FRONTEND",
+      "activity": "SESSION",
+      "timing": "FAR",
+      "scope": "NOW",
+      "status": "APPROVED",
+      "date": "2026-10-24",
+      "raw": {
+        "stuck": "같은 파일을 두 명이 동시에 고쳐서 합칠 때마다 충돌이 났어요. 누가 고친 게 맞는지 몰라 하루를 날렸어요.",
+        "solved": "화면 단위로 담당을 나누고, 합치기 전에 슬랙에 한 줄 남기기로 했어요. 그 뒤로는 충돌이 거의 없었어요.",
+        "again": "개발 시작 첫날 담당 화면부터 나눌 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "깃 충돌로 하루를 날리고 정한 규칙",
+        "body": {
+          "stuck": "같은 파일을 두 명이 동시에 고쳐서 합칠 때마다 충돌이 났어요. 누가 고친 게 맞는지 몰라 하루를 날렸어요.",
+          "solved": "화면 단위로 담당을 나누고, 합치기 전에 슬랙에 한 줄 남기기로 했어요. 그 뒤로는 충돌이 거의 없었어요.",
+          "again": "개발 시작 첫날 담당 화면부터 나눌 거예요.",
+          "memo": ""
+        },
+        "category": "ROLE_GUIDE",
+        "tags": [
+          "ROLE_SPLIT",
+          "DELAY"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 7,
+      "helpCount": 3
+    },
+    {
+      "ref": "o3",
+      "authorRef": "u3",
+      "projectRef": "p1",
+      "cohort": 14,
+      "part": "DESIGN",
+      "activity": "HACKATHON",
+      "timing": "FAR",
+      "scope": "NEXT",
+      "status": "APPROVED",
+      "date": "2026-10-25",
+      "raw": {
+        "stuck": "디자이너와 PM이 각자 피그마 파일을 만들어서 어떤 화면이 최신인지 아무도 몰랐어요.",
+        "solved": "파일을 하나로 합치고 페이지를 \"확정\"과 \"작업 중\"으로 나눴어요. 개발자는 확정 페이지만 보면 됐어요.",
+        "again": "첫날 파일 하나만 만들 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "피그마 파일을 하나로 합친 이유",
+        "body": {
+          "stuck": "디자이너와 PM이 각자 피그마 파일을 만들어서 어떤 화면이 최신인지 아무도 몰랐어요.",
+          "solved": "파일을 하나로 합치고 페이지를 \"확정\"과 \"작업 중\"으로 나눴어요. 개발자는 확정 페이지만 보면 됐어요.",
+          "again": "첫날 파일 하나만 만들 거예요.",
+          "memo": ""
+        },
+        "category": "ROLE_GUIDE",
+        "tags": [
+          "DESIGN_COLLAB"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 0,
+      "helpCount": 0
+    },
+    {
+      "ref": "r1",
+      "authorRef": "u9",
+      "projectRef": "p3",
+      "cohort": 14,
+      "part": "PM",
+      "activity": "MIDTERM",
+      "timing": "MID",
+      "scope": "NOW",
+      "status": "PENDING",
+      "date": "2026-10-27",
+      "raw": {
+        "stuck": "중간발표를 2주 앞두고 지금 주제를 밀고 갈지 바꿀지로 팀이 반반 갈렸어요. 이야기할수록 서로 감정이 상했어요.",
+        "solved": "각자 주제의 장단점을 3줄씩 써서 돌려 읽고, 데모 때 보여줄 화면이 더 많은 쪽으로 정했어요. 팀원 A이 먼저 양보해 줬어요.",
+        "again": "감정이 상하기 전에 쓰기로 먼저 정리할 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "중간발표 주제를 두고 팀이 둘로 갈렸을 때",
+        "body": {
+          "stuck": "중간발표를 2주 앞두고 지금 주제를 밀고 갈지 바꿀지로 팀이 반반 갈렸어요. 이야기할수록 서로 감정이 상했어요.",
+          "solved": "각자 주제의 장단점을 3줄씩 써서 돌려 읽고, 데모 때 보여줄 화면이 더 많은 쪽으로 정했어요. ⟦팀원 A⟧이 먼저 양보해 줬어요.",
+          "again": "감정이 상하기 전에 쓰기로 먼저 정리할 거예요.",
+          "memo": ""
+        },
+        "category": "ROLE_GUIDE",
+        "tags": [
+          "CONFLICT",
+          "TOPIC_CHANGE"
+        ],
+        "maskedCount": 1
+      },
+      "rejectReason": null,
+      "readCount": 0,
+      "helpCount": 0
+    },
+    {
+      "ref": "r2",
+      "authorRef": "u6",
+      "projectRef": "p2",
+      "cohort": 14,
+      "part": "DESIGN",
+      "activity": "MIDTERM",
+      "timing": "MID",
+      "scope": "NEXT",
+      "status": "PENDING",
+      "date": "2026-10-26",
+      "raw": {
+        "stuck": "시안을 다 완성하고 넘기려다 보니 프론트가 일주일을 기다렸어요.",
+        "solved": "완성 전이라도 화면 흐름이 정해진 것부터 하루에 두 장씩 넘겼어요. 프론트도 공통 버튼부터 먼저 만들 수 있었어요.",
+        "again": "흐름이 정해지면 바로 넘길 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "개발자에게 시안을 넘기는 타이밍",
+        "body": {
+          "stuck": "시안을 다 완성하고 넘기려다 보니 프론트가 일주일을 기다렸어요.",
+          "solved": "완성 전이라도 화면 흐름이 정해진 것부터 하루에 두 장씩 넘겼어요. 프론트도 공통 버튼부터 먼저 만들 수 있었어요.",
+          "again": "흐름이 정해지면 바로 넘길 거예요.",
+          "memo": ""
+        },
+        "category": "COLLAB",
+        "tags": [
+          "DESIGN_COLLAB",
+          "PLAN_DEV"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 0,
+      "helpCount": 0
+    },
+    {
+      "ref": "me1",
+      "authorRef": "u1",
+      "projectRef": "p1",
+      "cohort": 14,
+      "part": "PM",
+      "activity": "SESSION",
+      "timing": "FAR",
+      "scope": "NOW",
+      "status": "APPROVED",
+      "date": "2026-10-22",
+      "raw": {
+        "stuck": "회의 때 안건을 처음 듣는 팀원이 많아서 매번 설명하는 데만 20분이 걸렸어요.",
+        "solved": "회의 전날 밤 9시까지 안건을 슬랙에 올리고, 못 올린 안건은 다음 회의로 넘기기로 했어요.",
+        "again": "이 규칙을 첫 회의에서 바로 정할 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "회의 안건을 하루 전에 올리게 된 계기",
+        "body": {
+          "stuck": "회의 때 안건을 처음 듣는 팀원이 많아서 매번 설명하는 데만 20분이 걸렸어요.",
+          "solved": "회의 전날 밤 9시까지 안건을 슬랙에 올리고, 못 올린 안건은 다음 회의로 넘기기로 했어요.",
+          "again": "이 규칙을 첫 회의에서 바로 정할 거예요.",
+          "memo": ""
+        },
+        "category": "MEETING",
+        "tags": [
+          "MEETING_RUN"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 14,
+      "helpCount": 6
+    },
+    {
+      "ref": "me2",
+      "authorRef": "u1",
+      "projectRef": "p1",
+      "cohort": 14,
+      "part": "PM",
+      "activity": "MIDTERM",
+      "timing": "FAR",
+      "scope": "NEXT",
+      "status": "APPROVED",
+      "date": "2026-10-24",
+      "raw": {
+        "stuck": "주제 후보가 9개까지 늘어나서 어떤 걸 골라도 다들 아쉬워했어요.",
+        "solved": "후보마다 \"6주 안에 보여줄 화면 3개\"를 적게 하고, 못 적는 건 뺐어요. 남은 3개 중에 투표했어요.",
+        "again": "후보를 모으는 날과 고르는 날을 나눌 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "주제 후보를 3개로 줄인 기준",
+        "body": {
+          "stuck": "주제 후보가 9개까지 늘어나서 어떤 걸 골라도 다들 아쉬워했어요.",
+          "solved": "후보마다 \"6주 안에 보여줄 화면 3개\"를 적게 하고, 못 적는 건 뺐어요. 남은 3개 중에 투표했어요.",
+          "again": "후보를 모으는 날과 고르는 날을 나눌 거예요.",
+          "memo": ""
+        },
+        "category": "ROLE_GUIDE",
+        "tags": [
+          "TOPIC_PICK"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 0,
+      "helpCount": 0
+    },
+    {
+      "ref": "me3",
+      "authorRef": "u1",
+      "projectRef": "p1",
+      "cohort": 14,
+      "part": "PM",
+      "activity": "MIDTERM",
+      "timing": "MID",
+      "scope": "NOW",
+      "status": "PENDING",
+      "date": "2026-10-26",
+      "raw": {
+        "stuck": "프론트 두 명이 같은 화면을 맡고 있다는 걸 일주일 지나서야 알았어요. 서로 상대가 하는 줄 알았대요.",
+        "solved": "기능 목록 옆에 담당자 이름을 하나씩만 적는 표를 만들고, 매주 회의 시작 때 같이 봤어요.",
+        "again": "역할표를 첫 주에 만들 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "역할을 나누다 생긴 오해",
+        "body": {
+          "stuck": "프론트 두 명이 같은 화면을 맡고 있다는 걸 일주일 지나서야 알았어요. 서로 상대가 하는 줄 알았대요.",
+          "solved": "기능 목록 옆에 담당자 이름을 하나씩만 적는 표를 만들고, 매주 회의 시작 때 같이 봤어요.",
+          "again": "역할표를 첫 주에 만들 거예요.",
+          "memo": ""
+        },
+        "category": "ROLE_GUIDE",
+        "tags": [
+          "ROLE_SPLIT",
+          "PARTICIPATION"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 0,
+      "helpCount": 0
+    },
+    {
+      "ref": "me4",
+      "authorRef": "u1",
+      "projectRef": "p1",
+      "cohort": 14,
+      "part": "PM",
+      "activity": "SESSION",
+      "timing": "FAR",
+      "scope": "NOW",
+      "status": "REJECTED",
+      "date": "2026-10-25",
+      "raw": {
+        "stuck": "아이디어 회의가 3시간이나 걸렸고 끝나고 나서도 뭘 정했는지 다들 기억을 못 했어요.",
+        "solved": "다음엔 짧게 하자고 했어요.",
+        "again": "",
+        "memo": ""
+      },
+      "summary": {
+        "title": "아이디어 회의가 길어진 날",
+        "body": {
+          "stuck": "아이디어 회의가 3시간이나 걸렸고 끝나고 나서도 뭘 정했는지 다들 기억을 못 했어요.",
+          "solved": "다음엔 짧게 하자고 했어요.",
+          "again": "",
+          "memo": ""
+        },
+        "category": "MEETING",
+        "tags": [
+          "MEETING_RUN"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": "어떻게 넘겼는지가 한 줄뿐이에요. 실제로 바꾼 행동을 한두 줄 더 적어 주세요.",
+      "readCount": 0,
+      "helpCount": 0
+    },
+    {
+      "ref": "me5",
+      "authorRef": "u1",
+      "projectRef": "p4",
+      "cohort": 14,
+      "part": "PM",
+      "activity": "IDEATHON",
+      "timing": "WEEK",
+      "scope": "NOW",
+      "status": "APPROVED",
+      "date": "2026-10-10",
+      "raw": {
+        "stuck": "아이디어톤에서 처음 PM을 맡았는데 뭘 먼저 해야 할지 몰라서 회의만 계속 잡았어요.",
+        "solved": "팀원마다 할 수 있는 것과 해보고 싶은 것을 한 줄씩 받아서 역할을 나눴어요. 그다음부터는 회의가 짧아졌어요.",
+        "again": "첫날 한 줄씩 받는 것부터 할 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "처음 PM을 맡고 첫 주에 한 일",
+        "body": {
+          "stuck": "아이디어톤에서 처음 PM을 맡았는데 뭘 먼저 해야 할지 몰라서 회의만 계속 잡았어요.",
+          "solved": "팀원마다 할 수 있는 것과 해보고 싶은 것을 한 줄씩 받아서 역할을 나눴어요. 그다음부터는 회의가 짧아졌어요.",
+          "again": "첫날 한 줄씩 받는 것부터 할 거예요.",
+          "memo": ""
+        },
+        "category": "ROLE_GUIDE",
+        "tags": [
+          "ROLE_SPLIT"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 6,
+      "helpCount": 2
+    },
+    {
+      "ref": "op1a",
+      "authorRef": "op1",
+      "projectRef": "ops1",
+      "cohort": 14,
+      "part": "OPS",
+      "activity": "SESSION",
+      "timing": "FAR",
+      "scope": "NOW",
+      "status": "APPROVED",
+      "date": "2026-10-15",
+      "raw": {
+        "stuck": "세션에서 설명만 하다 보니 아기사자들이 뭘 모르는지 끝까지 몰랐어요.",
+        "solved": "세션 마지막 10분을 팀별 질문 시간으로 바꾸고, 질문을 하루 전에 슬랙으로 받았어요. 질문이 쌓이니 다음 세션 주제도 정하기 쉬워졌어요.",
+        "again": "질문 시간을 첫 세션부터 넣을 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "세션 끝 10분을 질문 시간으로 바꾼 이유",
+        "body": {
+          "stuck": "세션에서 설명만 하다 보니 아기사자들이 뭘 모르는지 끝까지 몰랐어요.",
+          "solved": "세션 마지막 10분을 팀별 질문 시간으로 바꾸고, 질문을 하루 전에 슬랙으로 받았어요. 질문이 쌓이니 다음 세션 주제도 정하기 쉬워졌어요.",
+          "again": "질문 시간을 첫 세션부터 넣을 거예요.",
+          "memo": ""
+        },
+        "category": "ROLE_GUIDE",
+        "tags": [
+          "PARTICIPATION"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 10,
+      "helpCount": 5
+    },
+    {
+      "ref": "op1b",
+      "authorRef": "op1",
+      "projectRef": "ops1",
+      "cohort": 14,
+      "part": "OPS",
+      "activity": "SESSION",
+      "timing": "FAR",
+      "scope": "NEXT",
+      "status": "APPROVED",
+      "date": "2026-10-22",
+      "raw": {
+        "stuck": "세션 자료가 슬랙, 드라이브, 노션에 흩어져서 아기사자들이 매번 어디 있냐고 물었어요.",
+        "solved": "기수 노션에 주차별 페이지를 만들고 모든 자료 링크를 거기로 모았어요. 슬랙에는 그 페이지 링크만 올렸어요.",
+        "again": "첫 주에 자료 위치부터 정할 거예요.",
+        "memo": ""
+      },
+      "summary": {
+        "title": "세션 자료를 노션 하나로 모은 이유",
+        "body": {
+          "stuck": "세션 자료가 슬랙, 드라이브, 노션에 흩어져서 아기사자들이 매번 어디 있냐고 물었어요.",
+          "solved": "기수 노션에 주차별 페이지를 만들고 모든 자료 링크를 거기로 모았어요. 슬랙에는 그 페이지 링크만 올렸어요.",
+          "again": "첫 주에 자료 위치부터 정할 거예요.",
+          "memo": ""
+        },
+        "category": "ROLE_GUIDE",
+        "tags": [
+          "MEETING_RUN"
+        ],
+        "maskedCount": 0
+      },
+      "rejectReason": null,
+      "readCount": 0,
+      "helpCount": 0
+    }
+  ],
+  "meetings": [
+    {
+      "ref": "mt1",
+      "ownerRef": "u1",
+      "type": "IDEA",
+      "date": "2026-10-21",
+      "decisions": [
+        "주제는 동아리 일정 관리로"
+      ],
+      "actions": [
+        {
+          "who": "기획",
+          "what": "경쟁 서비스 조사",
+          "due": "수"
+        },
+        {
+          "who": "디자인",
+          "what": "화면 흐름 초안",
+          "due": "목"
+        },
+        {
+          "who": "개발",
+          "what": "기술 스택 후보",
+          "due": "금"
+        }
+      ]
+    },
+    {
+      "ref": "mt2",
+      "ownerRef": "u1",
+      "type": "CHECK",
+      "date": "2026-10-23",
+      "decisions": [
+        "로그인은 구글 하나만",
+        "발표는 민수가 맡기"
+      ],
+      "actions": [
+        {
+          "who": "민수",
+          "what": "발표 뼈대",
+          "due": "일"
+        }
+      ]
+    },
+    {
+      "ref": "mt3",
+      "ownerRef": "u1",
+      "type": "CHECK",
+      "date": "2026-10-26",
+      "decisions": [
+        "알림은 빼고 일정 공유에 집중"
+      ],
+      "actions": [
+        {
+          "who": "서연",
+          "what": "시안 확정",
+          "due": "수"
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "ref": "e1",
+      "cohort": 14,
+      "type": "PROJECT_START",
+      "name": "14기 프로젝트 시작",
+      "date": "2026-10-19"
+    },
+    {
+      "ref": "e2",
+      "cohort": 14,
+      "type": "SESSION",
+      "name": "정기 세션: 협업 툴",
+      "date": "2026-10-29"
+    },
+    {
+      "ref": "e3",
+      "cohort": 14,
+      "type": "MIDTERM",
+      "name": "중간발표",
+      "date": "2026-11-08"
+    },
+    {
+      "ref": "e4",
+      "cohort": 14,
+      "type": "HACKATHON",
+      "name": "중앙 해커톤",
+      "date": "2026-11-21"
+    },
+    {
+      "ref": "e5",
+      "cohort": 14,
+      "type": "DEMODAY",
+      "name": "데모데이",
+      "date": "2026-12-05"
+    }
+  ],
+  "inviteCodes": [
+    {
+      "code": "LION14",
+      "userType": "MEMBER",
+      "cohort": 14,
+      "enabled": true,
+      "expiresAt": "2026-12-31",
+      "usedCount": 12
+    },
+    {
+      "code": "STAF14",
+      "userType": "ADMIN",
+      "cohort": 14,
+      "enabled": true,
+      "expiresAt": "2026-12-31",
+      "usedCount": 2
+    },
+    {
+      "code": "LION13",
+      "userType": "MEMBER",
+      "cohort": 13,
+      "enabled": false,
+      "expiresAt": "2025-12-31",
+      "usedCount": 31
+    }
+  ]
+}

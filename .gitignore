@@ -1,0 +1,14 @@
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+out/
+bin/
+
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# 비밀값은 절대 커밋하지 않기
+.env
+application-secret.yml
