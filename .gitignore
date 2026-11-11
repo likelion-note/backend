@@ -12,3 +12,7 @@ bin/
 # 비밀값은 절대 커밋하지 않기
 .env
 src/main/resources/application-secret.yml
+
+# 로컬 작업용 (커밋 금지)
+*.patch
+src/main/resources/static/login-test.html

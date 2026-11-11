@@ -13,6 +13,7 @@ import com.likelion.notebook.global.exception.BusinessException;
 import com.likelion.notebook.user.dto.MeResponse;
 import com.likelion.notebook.user.entity.User;
 import com.likelion.notebook.user.repository.UserRepository;
+import com.likelion.notebook.user.service.AssignmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,10 +25,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final com.likelion.notebook.auth.service.GoogleTokenVerifier googleTokenVerifier;
+    private final GoogleTokenVerifier googleTokenVerifier;
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
     private final InviteCodeRepository inviteCodeRepository;
+    private final AssignmentService assignmentService;
 
     /** FN-AUTH-01: 가입한 계정이면 바로 로그인, 처음이면 초대코드 단계로 */
     @Transactional(readOnly = true)
@@ -71,14 +73,15 @@ public class AuthService {
 
     private InviteCode findUsableCode(String code) {
         InviteCode inviteCode = inviteCodeRepository.findByCode(code.strip().toUpperCase())
-                .orElseThrow(() -> new BusinessException(ErrorCode.INVITE_CODE_INVALID));
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_INPUT, "코드를 다시 확인해 주세요"));
         if (!inviteCode.isUsable(LocalDate.now())) {
-            throw new BusinessException(ErrorCode.INVITE_CODE_DISABLED);
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "사용이 끝난 코드예요");
         }
         return inviteCode;
     }
 
     private LoginResponse loginOf(User user) {
-        return LoginResponse.registered(jwtProvider.createAccessToken(user.getId()), MeResponse.from(user));
+        return LoginResponse.registered(jwtProvider.createAccessToken(user.getId()),
+                MeResponse.of(user, assignmentService.findCurrent(user.getId()).orElse(null)));
     }
 }
