@@ -11,4 +11,4 @@ bin/
 
 # 비밀값은 절대 커밋하지 않기
 .env
-application-secret.yml
+src/main/resources/application-secret.yml
