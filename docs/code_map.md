@@ -2,7 +2,7 @@
 
 새 파일을 만들거나 로직이 바뀌면 이 문서도 같이 고치기. 경로는 `src/main/java/com/likelion/notebook/` 기준.
 
-마지막 갱신: 로그인 · 에러 코드 5개 · 배정 파트 분리 · 홈/가이드 · 운영진(프로젝트·멤버·일정)
+마지막 갱신: 로그인 · 에러 코드 5개 · 배정 파트 분리 · 홈/가이드 · 운영진(프로젝트·멤버·일정) · 회의
 
 ---
 
@@ -217,6 +217,46 @@
 
 ---
 
+## meeting/ (회의 도우미 · 회의 정리)
+
+### meeting/seed/MeetingSeed
+- `seed/meeting-helper.json`을 시작 시 메모리로 로드 (DB에 안 넣음)
+- 회의 종류 4개(FIRST, IDEA, CHECK, RETRO)마다 오늘 정할 질문 3개 + 막힐 때 팁
+- 팁의 `tags`(상황 태그 enum)로 관련 노트를 찾음 → 프론트가 노트 게시판 API를 tag로 조회 (B 담당)
+
+### meeting/service/MeetingService
+- `create`: 빈 줄은 버림. 정한 것과 할 일이 둘 다 비면 INVALID_INPUT. 날짜 생략 시 오늘
+- `list(userId, days)`: days 없으면 전체, 있으면 오늘 포함 최근 N일. 최신순
+- `get`, `delete`: 본인 것만. 남의 회의는 NOT_FOUND (존재 자체를 숨김)
+- **B의 성장일지 "회의 불러오기"는 `meetingService.list(userId, 7)`을 쓰기**
+
+### meeting/dto/MeetingResponse
+- `shareText`: 공유하기 버튼이 그대로 복사할 원문 (FN-MEET-04). 서버가 고정 형식으로 만듦
+  ```
+  아이디어 회의 · 10/27
+
+  정한 것
+  - 주제는 동아리 일정 관리로
+
+  누가 언제까지
+  - 민수 · 경쟁 서비스 조사 (수)
+  ```
+- 할 일의 `due`는 요일 한 글자("월"~"일") 같은 짧은 문자열 (날짜 아님)
+
+### meeting/dto/MeetingLabels
+- 회의 종류 한글 이름 (첫 회의, 아이디어 회의, 중간 점검 회의, 회고 회의)
+
+### meeting/controller/MeetingController
+| API | 화면 |
+|---|---|
+| `GET /api/meetings/templates` | SCR-MEET-01, 02 |
+| `POST /api/meetings` | SCR-MEET-03 → 응답의 shareText로 SCR-MEET-04 |
+| `GET /api/meetings?days=7` | SCR-MEET-05 (days 없이), SCR-JOUR-01 회의 불러오기 (days=7) |
+| `GET /api/meetings/{id}` | SCR-MEET-05 펼치기 |
+| `DELETE /api/meetings/{id}` | 잘못 저장한 회의 삭제 |
+
+---
+
 ## 설정
 
 ### application.yml
@@ -236,7 +276,7 @@
 | 파일 | 확인하는 것 |
 |---|---|
 | auth/AuthFlowTest | 가짜 구글 토큰 → NEED_SIGNUP → 틀린 코드 400 → 가입 → JWT로 /api/me → 재로그인 REGISTERED → 토큰 없이 401 |
-
 | admin/AdminFlowTest | 운영진 가입 → 프로젝트(팀 글자 A·B, 운영 null) → 아기사자 가입 → 기본 파트 → 배정 → 아기사자 홈에 PM 할 일. 아기사자의 운영진 API 403. 일정 등록, PROJECT_START 중복 400 |
-| guide/HomeGuideTest | 2주차·D-12·MID 계산, 할 일 체크/해제 반영, 배정 전 빈 할 일, 운영진 403, 다른 파트·주차 가이드 |
+| meeting/MeetingTest | 템플릿 4종, 빈 줄 제거·공유 원문, 최근 7일 필터, 남의 회의 404, 삭제, 둘 다 비면 400 |
+| guide/HomeGuideTest | 2주차·D-12·W1_2 계산, 할 일 체크/해제 반영, 배정 전 빈 할 일, 운영진 403, 다른 파트·주차 가이드 |
 | user/AssignmentServiceTest | 기본 파트 복사, 재배정 이력, 배정 해제, 파트 없음 에러, 운영 분류는 OPS |
