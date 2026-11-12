@@ -355,7 +355,7 @@
       "cohort": 13,
       "part": "PM",
       "activity": "MIDTERM",
-      "timing": "MID",
+      "timing": "W1_2",
       "scope": "NEXT",
       "status": "APPROVED",
       "date": "2025-10-20",
@@ -373,7 +373,6 @@
           "again": "주제가 불안하다는 느낌이 들면 그 주 회의에서 바로 꺼낼 거예요. 일주일 미룬 게 제일 아까웠어요.",
           "memo": ""
         },
-        "category": "ROLE_GUIDE",
         "tags": [
           "TOPIC_CHANGE",
           "PARTICIPATION"
@@ -391,7 +390,7 @@
       "cohort": 13,
       "part": "PM",
       "activity": "SESSION",
-      "timing": "FAR",
+      "timing": "W2PLUS",
       "scope": "NEXT",
       "status": "APPROVED",
       "date": "2025-10-20",
@@ -409,7 +408,6 @@
           "again": "첫 회의 때 이 규칙부터 정하고 시작할 거예요.",
           "memo": ""
         },
-        "category": "MEETING",
         "tags": [
           "MEETING_RUN",
           "CONFLICT"
@@ -427,7 +425,7 @@
       "cohort": 13,
       "part": "PM",
       "activity": "HACKATHON",
-      "timing": "FAR",
+      "timing": "W2PLUS",
       "scope": "NEXT",
       "status": "APPROVED",
       "date": "2025-10-20",
@@ -445,7 +443,6 @@
           "again": "기획서를 쓰기 전에 개발자에게 꼭 필요한 항목부터 물어볼 거예요.",
           "memo": ""
         },
-        "category": "COLLAB",
         "tags": [
           "PLAN_DEV",
           "PLAN_DOC"
@@ -463,7 +460,7 @@
       "cohort": 13,
       "part": "DESIGN",
       "activity": "MIDTERM",
-      "timing": "MID",
+      "timing": "W1_2",
       "scope": "NEXT",
       "status": "APPROVED",
       "date": "2025-10-20",
@@ -481,7 +478,6 @@
           "again": "첫 주에는 피그마에서 색 쓰는 걸 금지할 거예요.",
           "memo": ""
         },
-        "category": "ROLE_GUIDE",
         "tags": [
           "DESIGN_COLLAB",
           "PLAN_DEV"
@@ -499,7 +495,7 @@
       "cohort": 13,
       "part": "FRONTEND",
       "activity": "MIDTERM",
-      "timing": "MID",
+      "timing": "W1_2",
       "scope": "NEXT",
       "status": "APPROVED",
       "date": "2025-10-20",
@@ -517,7 +513,6 @@
           "again": "디자인을 기다리는 동안엔 공통 부품부터 만들 거예요.",
           "memo": ""
         },
-        "category": "ROLE_GUIDE",
         "tags": [
           "DESIGN_COLLAB",
           "DELAY"
@@ -535,7 +530,7 @@
       "cohort": 13,
       "part": "BACKEND",
       "activity": "SESSION",
-      "timing": "FAR",
+      "timing": "W2PLUS",
       "scope": "NEXT",
       "status": "APPROVED",
       "date": "2025-10-20",
@@ -553,7 +548,6 @@
           "again": "고르는 기준부터 먼저 정할 거예요.",
           "memo": ""
         },
-        "category": "ROLE_GUIDE",
         "tags": [
           "STACK",
           "CONFLICT"
@@ -571,7 +565,7 @@
       "cohort": 13,
       "part": "BACKEND",
       "activity": "HACKATHON",
-      "timing": "FAR",
+      "timing": "W2PLUS",
       "scope": "NEXT",
       "status": "APPROVED",
       "date": "2025-10-20",
@@ -589,7 +583,6 @@
           "again": "코드보다 명세 표를 먼저 쓸 거예요.",
           "memo": ""
         },
-        "category": "COLLAB",
         "tags": [
           "PLAN_DEV"
         ],
@@ -606,7 +599,7 @@
       "cohort": 13,
       "part": "FRONTEND",
       "activity": "HACKATHON",
-      "timing": "WEEK",
+      "timing": "DURING",
       "scope": "NEXT",
       "status": "APPROVED",
       "date": "2025-10-20",
@@ -624,7 +617,6 @@
           "again": "해커톤 시작 전에 합치는 사람부터 정할 거예요.",
           "memo": ""
         },
-        "category": "ROLE_GUIDE",
         "tags": [
           "RELEASE",
           "ROLE_SPLIT"
@@ -642,7 +634,7 @@
       "cohort": 13,
       "part": "PM",
       "activity": "SESSION",
-      "timing": "FAR",
+      "timing": "W2PLUS",
       "scope": "NEXT",
       "status": "APPROVED",
       "date": "2025-10-20",
@@ -660,7 +652,6 @@
           "again": "아이디어를 내는 시간과 고르는 시간을 처음부터 나눌 거예요.",
           "memo": ""
         },
-        "category": "MEETING",
         "tags": [
           "MEETING_RUN",
           "TOPIC_PICK"
@@ -678,7 +669,7 @@
       "cohort": 13,
       "part": "DESIGN",
       "activity": "DEMODAY",
-      "timing": "WEEK",
+      "timing": "DURING",
       "scope": "NEXT",
       "status": "APPROVED",
       "date": "2025-10-20",
@@ -696,7 +687,6 @@
           "again": "발표 화면은 기능이 아니라 장면 순서로 짤 거예요.",
           "memo": ""
         },
-        "category": "ROLE_GUIDE",
         "tags": [
           "RELEASE"
         ],
@@ -713,7 +703,7 @@
       "cohort": 13,
       "part": "PM",
       "activity": "SESSION",
-      "timing": "FAR",
+      "timing": "W2PLUS",
       "scope": "NEXT",
       "status": "APPROVED",
       "date": "2025-10-20",
@@ -731,7 +721,6 @@
           "again": "의견은 말보다 쓰기로 먼저 받을 거예요.",
           "memo": ""
         },
-        "category": "MEETING",
         "tags": [
           "MEETING_RUN",
           "PARTICIPATION"
@@ -749,7 +738,7 @@
       "cohort": 13,
       "part": "BACKEND",
       "activity": "DEMODAY",
-      "timing": "MID",
+      "timing": "W1_2",
       "scope": "NEXT",
       "status": "APPROVED",
       "date": "2025-10-20",
@@ -767,7 +756,6 @@
           "again": "2주 전에 한 번 배포해 볼 거예요.",
           "memo": ""
         },
-        "category": "ROLE_GUIDE",
         "tags": [
           "RELEASE",
           "DELAY"
@@ -785,7 +773,7 @@
       "cohort": 13,
       "part": "PM",
       "activity": "HACKATHON",
-      "timing": "WEEK",
+      "timing": "DURING",
       "scope": "NEXT",
       "status": "APPROVED",
       "date": "2025-10-20",
@@ -803,7 +791,6 @@
           "again": "해커톤 일주일 전에 역할표를 한 번 더 볼 거예요.",
           "memo": ""
         },
-        "category": "ROLE_GUIDE",
         "tags": [
           "ROLE_SPLIT",
           "DELAY"
@@ -821,7 +808,7 @@
       "cohort": 13,
       "part": "PM",
       "activity": "MIDTERM",
-      "timing": "MID",
+      "timing": "W1_2",
       "scope": "NEXT",
       "status": "APPROVED",
       "date": "2025-10-20",
@@ -839,7 +826,6 @@
           "again": "덱은 3장짜리 뼈대부터 만들고 살을 붙일 거예요.",
           "memo": ""
         },
-        "category": "ROLE_GUIDE",
         "tags": [
           "RELEASE",
           "PLAN_DOC"
@@ -857,7 +843,7 @@
       "cohort": 13,
       "part": "OPS",
       "activity": "SESSION",
-      "timing": "FAR",
+      "timing": "W2PLUS",
       "scope": "NEXT",
       "status": "APPROVED",
       "date": "2025-10-20",
@@ -875,7 +861,6 @@
           "again": "질문 시간을 처음부터 세션에 넣을 거예요.",
           "memo": ""
         },
-        "category": "ROLE_GUIDE",
         "tags": [
           "PARTICIPATION"
         ],
@@ -892,7 +877,7 @@
       "cohort": 14,
       "part": "PM",
       "activity": "SESSION",
-      "timing": "FAR",
+      "timing": "W2PLUS",
       "scope": "NOW",
       "status": "APPROVED",
       "date": "2026-10-22",
@@ -910,7 +895,6 @@
           "again": "첫 회의부터 타이머를 켤 거예요.",
           "memo": ""
         },
-        "category": "MEETING",
         "tags": [
           "MEETING_RUN",
           "TOPIC_PICK"
@@ -928,7 +912,7 @@
       "cohort": 14,
       "part": "FRONTEND",
       "activity": "SESSION",
-      "timing": "FAR",
+      "timing": "W2PLUS",
       "scope": "NOW",
       "status": "APPROVED",
       "date": "2026-10-24",
@@ -946,7 +930,6 @@
           "again": "개발 시작 첫날 담당 화면부터 나눌 거예요.",
           "memo": ""
         },
-        "category": "ROLE_GUIDE",
         "tags": [
           "ROLE_SPLIT",
           "DELAY"
@@ -964,7 +947,7 @@
       "cohort": 14,
       "part": "DESIGN",
       "activity": "HACKATHON",
-      "timing": "FAR",
+      "timing": "W2PLUS",
       "scope": "NEXT",
       "status": "APPROVED",
       "date": "2026-10-25",
@@ -982,7 +965,6 @@
           "again": "첫날 파일 하나만 만들 거예요.",
           "memo": ""
         },
-        "category": "ROLE_GUIDE",
         "tags": [
           "DESIGN_COLLAB"
         ],
@@ -999,7 +981,7 @@
       "cohort": 14,
       "part": "PM",
       "activity": "MIDTERM",
-      "timing": "MID",
+      "timing": "W1_2",
       "scope": "NOW",
       "status": "PENDING",
       "date": "2026-10-27",
@@ -1017,7 +999,6 @@
           "again": "감정이 상하기 전에 쓰기로 먼저 정리할 거예요.",
           "memo": ""
         },
-        "category": "ROLE_GUIDE",
         "tags": [
           "CONFLICT",
           "TOPIC_CHANGE"
@@ -1035,7 +1016,7 @@
       "cohort": 14,
       "part": "DESIGN",
       "activity": "MIDTERM",
-      "timing": "MID",
+      "timing": "W1_2",
       "scope": "NEXT",
       "status": "PENDING",
       "date": "2026-10-26",
@@ -1053,7 +1034,6 @@
           "again": "흐름이 정해지면 바로 넘길 거예요.",
           "memo": ""
         },
-        "category": "COLLAB",
         "tags": [
           "DESIGN_COLLAB",
           "PLAN_DEV"
@@ -1071,7 +1051,7 @@
       "cohort": 14,
       "part": "PM",
       "activity": "SESSION",
-      "timing": "FAR",
+      "timing": "W2PLUS",
       "scope": "NOW",
       "status": "APPROVED",
       "date": "2026-10-22",
@@ -1089,7 +1069,6 @@
           "again": "이 규칙을 첫 회의에서 바로 정할 거예요.",
           "memo": ""
         },
-        "category": "MEETING",
         "tags": [
           "MEETING_RUN"
         ],
@@ -1106,7 +1085,7 @@
       "cohort": 14,
       "part": "PM",
       "activity": "MIDTERM",
-      "timing": "FAR",
+      "timing": "W2PLUS",
       "scope": "NEXT",
       "status": "APPROVED",
       "date": "2026-10-24",
@@ -1124,7 +1103,6 @@
           "again": "후보를 모으는 날과 고르는 날을 나눌 거예요.",
           "memo": ""
         },
-        "category": "ROLE_GUIDE",
         "tags": [
           "TOPIC_PICK"
         ],
@@ -1141,7 +1119,7 @@
       "cohort": 14,
       "part": "PM",
       "activity": "MIDTERM",
-      "timing": "MID",
+      "timing": "W1_2",
       "scope": "NOW",
       "status": "PENDING",
       "date": "2026-10-26",
@@ -1159,7 +1137,6 @@
           "again": "역할표를 첫 주에 만들 거예요.",
           "memo": ""
         },
-        "category": "ROLE_GUIDE",
         "tags": [
           "ROLE_SPLIT",
           "PARTICIPATION"
@@ -1177,7 +1154,7 @@
       "cohort": 14,
       "part": "PM",
       "activity": "SESSION",
-      "timing": "FAR",
+      "timing": "W2PLUS",
       "scope": "NOW",
       "status": "REJECTED",
       "date": "2026-10-25",
@@ -1195,7 +1172,6 @@
           "again": "",
           "memo": ""
         },
-        "category": "MEETING",
         "tags": [
           "MEETING_RUN"
         ],
@@ -1212,7 +1188,7 @@
       "cohort": 14,
       "part": "PM",
       "activity": "IDEATHON",
-      "timing": "WEEK",
+      "timing": "DURING",
       "scope": "NOW",
       "status": "APPROVED",
       "date": "2026-10-10",
@@ -1230,7 +1206,6 @@
           "again": "첫날 한 줄씩 받는 것부터 할 거예요.",
           "memo": ""
         },
-        "category": "ROLE_GUIDE",
         "tags": [
           "ROLE_SPLIT"
         ],
@@ -1247,7 +1222,7 @@
       "cohort": 14,
       "part": "OPS",
       "activity": "SESSION",
-      "timing": "FAR",
+      "timing": "W2PLUS",
       "scope": "NOW",
       "status": "APPROVED",
       "date": "2026-10-15",
@@ -1265,7 +1240,6 @@
           "again": "질문 시간을 첫 세션부터 넣을 거예요.",
           "memo": ""
         },
-        "category": "ROLE_GUIDE",
         "tags": [
           "PARTICIPATION"
         ],
@@ -1282,7 +1256,7 @@
       "cohort": 14,
       "part": "OPS",
       "activity": "SESSION",
-      "timing": "FAR",
+      "timing": "W2PLUS",
       "scope": "NEXT",
       "status": "APPROVED",
       "date": "2026-10-22",
@@ -1300,7 +1274,6 @@
           "again": "첫 주에 자료 위치부터 정할 거예요.",
           "memo": ""
         },
-        "category": "ROLE_GUIDE",
         "tags": [
           "MEETING_RUN"
         ],

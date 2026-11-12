@@ -2,7 +2,7 @@
 
 새 파일을 만들거나 로직이 바뀌면 이 문서도 같이 고치기. 경로는 `src/main/java/com/likelion/notebook/` 기준.
 
-마지막 갱신: 로그인 · 에러 코드 5개 · 배정 파트 분리
+마지막 갱신: 로그인 · 에러 코드 5개 · 배정 파트 분리 · 홈/가이드
 
 ---
 
@@ -59,6 +59,10 @@
 
 ### global/config/AuthArgumentConfig
 - 위 resolver를 Spring MVC에 등록
+
+### global/config/ClockConfig
+- "오늘"은 항상 `LocalDate.now(clock)`으로 구하기 (`LocalDate.now()` 직접 쓰지 않기)
+- `app.today`가 있으면 그 날짜로 고정. local은 데모 데이터 기준일 2026-10-27, prod는 비움(실제 오늘). 시연 때 날짜 고정하려면 `APP_TODAY`
 
 ---
 
@@ -142,6 +146,42 @@
 
 ---
 
+## guide/ (홈 · 파트 가이드 · 일정)
+
+### guide/seed/GuideSeed
+- `seed/guide.json`을 앱 시작 시 읽어 메모리에 둠 (DB에 안 넣음)
+- stages: 주차 구간 6개(W1, W2, W3, W4_5, W6, W7) + 구간별 운영진 한마디(opTip)
+- items: 파트 × 구간 할 일 69개. `key`(예: `PM-W2-0`)가 GuideCheck.itemKey. 순서 바꾸면 기존 체크가 엉키니 추가는 맨 뒤에
+- docs: 지난 기수 자료 6개. 할 일의 `action.type = DOC`이 `docKey`로 가리킴
+- action.type = MEETING이면 `meetingType`으로 회의 도우미 이동
+
+### guide/service/StageService (FN-MATCH-01)
+- 기수의 일정(events)과 오늘 날짜로 계산. 저장하지 않음
+- 주차: PROJECT_START 일정이 1주차. 시작 전이면 null
+- 구간: 1→W1, 2→W2, 3→W3, 4·5→W4_5, 6→W6, 7 이상→W7
+- D-day: 오늘 이후 가장 가까운 큰 행사(PROJECT_START, SESSION 제외)
+- 다음 정기 세션: D-day와 따로
+- 시점(Timing): 다음 큰 행사까지 14일 이상 W2PLUS, 7~13일 W1_2, 0~6일 DURING, 남은 행사 없으면 AFTER
+- 프로젝트 기간: 시작일이 지났고 남은 큰 행사가 있을 때. 아니면 홈에 "지금은 프로젝트 기간이 아니에요"
+- **B 일지 작성의 시점 기본값도 이걸 쓰기**: `stageService.current(cohort).timing()`
+
+### guide/service/GuideService
+- `home`: 운영진이면 FORBIDDEN. 배정 전이거나 기간 밖이면 할 일 빈 배열. 할 일 = 지금 배정 파트 × 이번 구간
+- `guide`: part·stage를 안 주면 내 파트·이번 구간. 할 일이 가리키는 자료(docs)만 같이 내려줌
+- `check`: true면 체크 저장, false면 삭제. 같은 요청을 여러 번 보내도 결과 같음. 없는 키면 NOT_FOUND
+
+### guide/controller/GuideController
+| API | 화면 |
+|---|---|
+| `GET /api/home` | SCR-HOME-01 (A 부분: 배정, 주차·D-day, 할 일, 운영진 한마디). B가 배너·노트 반응·추천 노트 필드 추가 예정 |
+| `GET /api/guide?part=&stage=` | SCR-GUIDE-01, 02 |
+| `PUT /api/guide/checks/{itemKey}` body `{checked}` | 홈·가이드 체크박스 |
+
+### guide/LocalEventSeeder
+- local에서만 demo-data.json 일정 5개 등록 (시작 10/19, 세션 10/29, 중간발표 11/08, 해커톤 11/21, 데모데이 12/05)
+
+---
+
 ## 설정
 
 ### application.yml
@@ -152,6 +192,7 @@
 | app.jwt.access-token-hours | accessToken 유효시간 | `JWT_ACCESS_HOURS` (기본 168) |
 | app.jwt.signup-token-minutes | signupToken 유효시간 | 10 고정 |
 | app.auth.dev-mode | `X-User-Id`, `dev:` 토큰 허용 | local 구역에서만 true. prod는 false |
+| app.today | 오늘 날짜 고정 (비우면 실제 오늘) | `APP_TODAY` |
 
 ---
 
@@ -160,4 +201,5 @@
 | 파일 | 확인하는 것 |
 |---|---|
 | auth/AuthFlowTest | 가짜 구글 토큰 → NEED_SIGNUP → 틀린 코드 400 → 가입 → JWT로 /api/me → 재로그인 REGISTERED → 토큰 없이 401 |
+| guide/HomeGuideTest | 2주차·D-12·W1_2 계산, 할 일 체크/해제 반영, 배정 전 빈 할 일, 운영진 403, 다른 파트·주차 가이드 |
 | user/AssignmentServiceTest | 기본 파트 복사, 재배정 이력, 배정 해제, 파트 없음 에러, 운영 분류는 OPS |

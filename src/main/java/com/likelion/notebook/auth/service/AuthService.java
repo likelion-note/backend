@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -30,6 +31,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final InviteCodeRepository inviteCodeRepository;
     private final AssignmentService assignmentService;
+    private final Clock clock;
 
     /** FN-AUTH-01: 가입한 계정이면 바로 로그인, 처음이면 초대코드 단계로 */
     @Transactional(readOnly = true)
@@ -74,7 +76,7 @@ public class AuthService {
     private InviteCode findUsableCode(String code) {
         InviteCode inviteCode = inviteCodeRepository.findByCode(code.strip().toUpperCase())
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_INPUT, "코드를 다시 확인해 주세요"));
-        if (!inviteCode.isUsable(LocalDate.now())) {
+        if (!inviteCode.isUsable(LocalDate.now(clock))) {
             throw new BusinessException(ErrorCode.INVALID_INPUT, "사용이 끝난 코드예요");
         }
         return inviteCode;
