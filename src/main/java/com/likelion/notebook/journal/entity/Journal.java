@@ -122,7 +122,7 @@ public class Journal extends BaseTimeEntity {
     public void updateDraft(ProjectCategory project, Part part, Activity activity,
                             Timing timing, Scope scope, JournalBody raw) {
         if (status != Status.DRAFT && status != Status.REJECTED) {
-            throw new BusinessException(ErrorCode.JOURNAL_INVALID_STATUS);
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "지금 상태에서는 할 수 없는 작업이에요");
         }
         this.project = project;
         this.part = part;
@@ -143,13 +143,13 @@ public class Journal extends BaseTimeEntity {
     /** 검토 요청 (처음 제출 + 돌려받은 뒤 다시 제출) */
     public void submit() {
         if (status != Status.DRAFT && status != Status.REJECTED) {
-            throw new BusinessException(ErrorCode.JOURNAL_INVALID_STATUS);
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "지금 상태에서는 할 수 없는 작업이에요");
         }
         if (raw == null || raw.getStuck() == null || raw.getStuck().strip().length() < 30) {
-            throw new BusinessException(ErrorCode.JOURNAL_STUCK_TOO_SHORT);
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "막힌 것을 30자 이상 적어 주세요");
         }
         if (summary == null || scope == null) {
-            throw new BusinessException(ErrorCode.JOURNAL_INVALID_STATUS);
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "지금 상태에서는 할 수 없는 작업이에요");
         }
         this.status = Status.PENDING;
         this.rejectReason = null;
@@ -164,7 +164,7 @@ public class Journal extends BaseTimeEntity {
     public void reject(String reason) {
         requirePending();
         if (reason == null || reason.isBlank()) {
-            throw new BusinessException(ErrorCode.REJECT_REASON_REQUIRED);
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "사유를 한 줄 적어 주세요");
         }
         this.status = Status.REJECTED;
         this.rejectReason = reason.strip();
@@ -184,7 +184,7 @@ public class Journal extends BaseTimeEntity {
 
     private void requirePending() {
         if (status != Status.PENDING) {
-            throw new BusinessException(ErrorCode.JOURNAL_INVALID_STATUS);
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "지금 상태에서는 할 수 없는 작업이에요");
         }
     }
 }

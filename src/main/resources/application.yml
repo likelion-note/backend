@@ -14,8 +14,19 @@ server:
 # 프론트 주소 (CORS). 배포 후 실제 주소로 바꿔서 환경변수로 넣기
 app:
   cors:
-    allowed-origins: ${CORS_ORIGINS:http://localhost:5173,http://localhost:3000}
-
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173,http://localhost:3000,https://likelionnote.vercel.app}
+  google:
+    client-id: ${GOOGLE_CLIENT_ID:}
+  jwt:
+    # 32자 이상. 배포에서는 반드시 JWT_SECRET 환경변수로 바꾸기
+    secret: ${JWT_SECRET:local-only-secret-change-me-0123456789abcdef}
+    access-token-hours: ${JWT_ACCESS_HOURS:168}
+    signup-token-minutes: 10
+  auth:
+    # true면 X-User-Id 헤더와 "dev:" 가짜 구글 토큰을 허용 (로컬 테스트용)
+    dev-mode: false
+  # 비우면 실제 오늘(한국 시간). 시연 때 날짜를 고정하려면 APP_TODAY=2026-10-27
+  today: ${APP_TODAY:}
 ---
 # 로컬: H2 메모리 DB. DB 설치 없이 바로 실행됨
 spring:
@@ -33,6 +44,11 @@ spring:
     hibernate:
       ddl-auto: create
     show-sql: true
+app:
+  auth:
+    dev-mode: true
+  # 데모 데이터(seed/demo-data.json) 기준 날짜. 주차·D-day가 데모 화면과 같게 나옴. 지우면 실제 오늘
+  today: 2026-10-27
 
 ---
 # 배포: 값은 전부 환경변수로 주입. 여기에 비밀번호 적지 않기
