@@ -31,15 +31,16 @@ public final class JournalEnums {
     @Getter
     @RequiredArgsConstructor
     public enum Timing {
-        FAR("2주 이상 전"), MID("1~2주 전"), WEEK("행사 주간"), AFTER("행사 후");
+        W2PLUS("2주 이상 전"), W1_2("1~2주 전"), DURING("행사 주간"), AFTER("행사 후");
         private final String label;
     }
 
-    /** AI가 정하는 분류. 어느 기능에서 노트를 쓰는지 */
-    public enum Category {
-        MEETING,    // 회의 도우미 팁에 연결
-        ROLE_GUIDE, // 역할별 가이드
-        COLLAB      // 기획↔개발 소통
+    /** 포트폴리오 요약 형식 */
+    @Getter
+    @RequiredArgsConstructor
+    public enum PortfolioFormat {
+        RESUME_3LINES("이력서 3줄"), EXPERIENCE_PARAGRAPH("경험 서술 문단");
+        private final String label;
     }
 
     /** 상황 태그 12개 고정. AI 출력도 이 목록 안에서만 */
