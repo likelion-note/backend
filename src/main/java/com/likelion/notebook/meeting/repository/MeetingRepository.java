@@ -8,8 +8,9 @@ import java.util.List;
 
 public interface MeetingRepository extends JpaRepository<Meeting, Long> {
 
-    List<Meeting> findByOwnerIdOrderByMeetingDateDesc(Long ownerId);
+    /** 지난 회의 목록 (SCR-MEET-05). 최신순 */
+    List<Meeting> findByOwnerIdOrderByMeetingDateDescIdDesc(Long ownerId);
 
-    /** 성장일지 "회의 불러오기": 지난 7일 (from = 오늘 - 6일) */
-    List<Meeting> findByOwnerIdAndMeetingDateBetweenOrderByMeetingDateAsc(Long ownerId, LocalDate from, LocalDate to);
+    /** 최근 N일 (성장일지 "회의 불러오기"는 7일). 최신순 */
+    List<Meeting> findByOwnerIdAndMeetingDateBetweenOrderByMeetingDateDescIdDesc(Long ownerId, LocalDate from, LocalDate to);
 }
