@@ -12,8 +12,8 @@ public interface JournalRepository extends JpaRepository<Journal, Long> {
     /** 내 기록 탭 */
     List<Journal> findByAuthorIdOrderByCreatedAtDesc(Long authorId);
 
-    /** 운영진 검토 대기열: 오래된 순, 본인 일지 제외 */
-    @Query("select j from Journal j where j.status = :status and j.author.id <> :reviewerId order by j.submittedAt asc")
+    /** 운영진 검토 대기열: 오래된 순(updatedAt), 본인 일지 제외 */
+    @Query("select j from Journal j where j.status = :status and j.author.id <> :reviewerId order by j.updatedAt asc")
     List<Journal> findByStatusExcludingAuthor(Status status, Long reviewerId);
 
     default List<Journal> findPendingForReviewer(Long reviewerId) {
@@ -26,9 +26,11 @@ public interface JournalRepository extends JpaRepository<Journal, Long> {
     /*
      * TODO(B): 노트 게시판 조회 쿼리. 공개 조건을 반드시 여기(서버)에서 거르기.
      *   status = APPROVED
-     *   and ( cohort < 내 기수
-     *         or (cohort = 내 기수 and scope = NOW and project.id not in :내가 거쳐간 프로젝트들) )
-     *   + 파트·시점·태그 필터, 검색어(띄어쓰기 무시, 모든 단어 포함)
-     * 검색은 같은 기수 노트의 팀 글자로 걸리면 안 됨 (데모 버그였음).
+     *   and ( author.cohort < 내 기수
+     *         or (author.cohort = 내 기수 and scope = NOW
+     *             and (project is null or 내가 그 project의 배정 행(is_current=false 포함)에 없음)) )
+     *   작성자 본인 노트는 항상 보임. 미분류(project null)는 숨기지 않음.
+     *   + 파트·시점·태그 필터, 검색어(제목·본문·태그. authorLabel/팀 가명은 검색 안 함)
+     * 태그는 JSON 컬럼이라 필터는 문자열 비교(tags like '%"STACK"%')로. H2·MySQL 둘 다 동작.
      */
 }

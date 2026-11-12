@@ -44,10 +44,10 @@
 
 - A 완료: 구글 로그인 + 초대코드 가입 + JWT(`Authorization: Bearer`), local 전용 `X-User-Id`(`app.auth.dev-mode`), `/api/me`, 배정(`AssignmentService`). 자세한 건 `docs/code_map.md`
 - `ErrorCode` 공통 5개로 정리 완료 (A). 문구는 `new BusinessException(code, message)`로 전달
-- B(journal·note)는 아직 `entity`, `repository`만 있음. `controller / service / dto` 없음
+- B(journal·note): 엔티티는 확정 ERD에 맞춤 완료. `controller / service / dto`는 아직 없음
 - `./gradlew test` 통과. `gradlew` 래퍼 있음
 - **로컬 JDK는 17 사용.** PC에 JDK 27도 설치돼 있지만 Gradle 래퍼(9.3.0)는 JDK 17로만 확인함. 빌드가 이상하면 `JAVA_HOME`이 jdk-17을 가리키는지 먼저 확인
-- **엔티티가 아직 확정 ERD와 다 맞지는 않음** → 아래 "ERD 맞추기" 참고
+- **A 영역 엔티티는 아직 확정 ERD와 다 맞지는 않음** → 아래 "ERD 맞추기" 참고
 - 시드 JSON은 있지만 읽는 코드(로더)는 없음 (초대코드만 `LocalInviteCodeSeeder`로 local에 넣음)
 
 ## ERD 맞추기 (할 일)
@@ -57,11 +57,11 @@
 테이블 10개: `users`, `project_category`, `project_member`, `invite_code`, `events`, `guide_check`, `meeting`, `journal`, `note_reaction`, `portfolio_summary`
 
 **B (journal·note)**
-- [ ] `Timing`: `W2PLUS`, `W1_2`, `DURING`, `AFTER`. `Tag`는 지금 코드 값 그대로
-- [ ] `Journal`: `reviewer`(User, nullable), `reviewedAt` 추가. `tags`는 JSON 배열. `category`, `submittedAt` 삭제. `readCount`·`helpCount`도 삭제 (ERD: 개수는 매번 셈)
-- [ ] `NoteRead` + `NoteHelp` → `NoteReaction` 하나로 (행 있으면 읽음, `helped`면 도움돼요, (user, journal) 유니크)
-- [ ] `PortfolioSummary` 엔티티 새로 (하루 5회 제한 계산용)
-- [ ] `JournalRepository` 정렬 `submittedAt` → `updatedAt`
+- [x] `Timing`: `W2PLUS`, `W1_2`, `DURING`, `AFTER`. `Tag`는 지금 코드 값 그대로
+- [x] `Journal`: `reviewer`(User, nullable), `reviewedAt` 추가. `tags`는 JSON 배열. `category`, `submittedAt` 삭제. `readCount`·`helpCount`도 삭제 (ERD: 개수는 매번 셈)
+- [x] `NoteRead` + `NoteHelp` → `NoteReaction` 하나로 (행 있으면 읽음, `helped`면 도움돼요, (user, journal) 유니크)
+- [x] `PortfolioSummary` 엔티티 새로 (하루 5회 제한 계산용)
+- [x] `JournalRepository` 정렬 `submittedAt` → `updatedAt`
 
 **A (user·auth·guide·meeting)**
 - [x] `Part`: `OPS` 추가
