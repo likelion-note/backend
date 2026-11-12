@@ -2,7 +2,7 @@
 
 새 파일을 만들거나 로직이 바뀌면 이 문서도 같이 고치기. 경로는 `src/main/java/com/likelion/notebook/` 기준.
 
-마지막 갱신: 로그인 · 에러 코드 5개 · 배정 파트 분리 · 홈/가이드
+마지막 갱신: 로그인 · 에러 코드 5개 · 배정 파트 분리 · 홈/가이드 · 운영진(프로젝트·멤버·일정)
 
 ---
 
@@ -56,6 +56,11 @@
 - `@CurrentUser Long` 파라미터에 값을 채움
 - 순서: `Authorization: Bearer` → JwtProvider로 검증 → userId / (local만) `X-User-Id` 헤더 / 둘 다 없으면 UNAUTHORIZED
 - DB는 안 봄. "누구인지"만 알려주고 "운영진인지"는 서비스에서 따로 확인
+
+### global/auth/AdminChecker
+- 운영진 API 맨 앞에서 `User admin = adminChecker.require(userId)` 호출
+- 운영진이 아니면 FORBIDDEN. 반환된 운영진의 기수(cohort) 안에서만 작업 (다른 기수 데이터는 NOT_FOUND)
+- B의 검토 API도 이걸 쓰면 됨
 
 ### global/config/AuthArgumentConfig
 - 위 resolver를 Spring MVC에 등록
@@ -137,6 +142,26 @@
 | findUnassigned | 지금 배정이 없는 아기사자, 최근 가입순 (운영진 "배정 전" 그룹) |
 | countByCohortAndType | 운영진 수 → 2명 이상이면 본인 일지 검토 금지 |
 
+### user/service/ProjectService (FN-ADM-02)
+- `create`: 운영진 본인 기수에 생성. TEAM은 teamLetter를 A, B, C… 자동 부여 (기수 안 TEAM 개수 기준), OPS는 null
+- `list`: 기수의 분류 + 지금 멤버 수
+
+### user/service/MemberService (FN-ADM-03)
+- `members`: 배정 전(최근 가입순) / 팀별 → 파트별(PM, DESIGN, FRONTEND, BACKEND) / 운영 분류별
+- `assign`: 같은 기수만. 팀에 OPS 파트 불가. 나머지 규칙은 AssignmentService
+- `changeDefaultPart`: 아기사자에게 OPS 불가
+- `unassign`: 배정 해제
+
+### user/controller/AdminMemberController
+| API | 화면 |
+|---|---|
+| `GET /api/admin/projects` | SCR-ADM-04, 05 |
+| `POST /api/admin/projects` body `{title, kind}` | SCR-ADM-06 |
+| `GET /api/admin/members` | SCR-ADM-04 |
+| `PUT /api/admin/members/{id}/assignment` body `{projectId, part?}` | SCR-ADM-05 |
+| `DELETE /api/admin/members/{id}/assignment` | 배정 해제 |
+| `PUT /api/admin/members/{id}/default-part` body `{part}` | SCR-ADM-05 |
+
 ### user/controller/MeController
 - `GET /api/me`: 내 정보 + 기본 파트 + 지금 배정. 배정 전이면 `part`, `project`가 null
 
@@ -177,6 +202,16 @@
 | `GET /api/guide?part=&stage=` | SCR-GUIDE-01, 02 |
 | `PUT /api/guide/checks/{itemKey}` body `{checked}` | 홈·가이드 체크박스 |
 
+### guide/service/EventService (FN-ADM-04)
+- `list`: 기수 일정 날짜순
+- `create`: PROJECT_START는 기수마다 하나 (중복이면 INVALID_INPUT). 저장 즉시 모든 홈에 반영(홈이 매번 계산)
+
+### guide/controller/AdminEventController
+| API | 화면 |
+|---|---|
+| `GET /api/admin/events` | SCR-ADM-07 |
+| `POST /api/admin/events` body `{name, type, eventDate}` | SCR-ADM-07 |
+
 ### guide/LocalEventSeeder
 - local에서만 demo-data.json 일정 5개 등록 (시작 10/19, 세션 10/29, 중간발표 11/08, 해커톤 11/21, 데모데이 12/05)
 
@@ -201,5 +236,7 @@
 | 파일 | 확인하는 것 |
 |---|---|
 | auth/AuthFlowTest | 가짜 구글 토큰 → NEED_SIGNUP → 틀린 코드 400 → 가입 → JWT로 /api/me → 재로그인 REGISTERED → 토큰 없이 401 |
-| guide/HomeGuideTest | 2주차·D-12·W1_2 계산, 할 일 체크/해제 반영, 배정 전 빈 할 일, 운영진 403, 다른 파트·주차 가이드 |
+
+| admin/AdminFlowTest | 운영진 가입 → 프로젝트(팀 글자 A·B, 운영 null) → 아기사자 가입 → 기본 파트 → 배정 → 아기사자 홈에 PM 할 일. 아기사자의 운영진 API 403. 일정 등록, PROJECT_START 중복 400 |
+| guide/HomeGuideTest | 2주차·D-12·MID 계산, 할 일 체크/해제 반영, 배정 전 빈 할 일, 운영진 403, 다른 파트·주차 가이드 |
 | user/AssignmentServiceTest | 기본 파트 복사, 재배정 이력, 배정 해제, 파트 없음 에러, 운영 분류는 OPS |
