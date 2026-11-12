@@ -10,7 +10,7 @@
 
 ## 규칙
 
-- 값은 전부 백엔드 enum 이름이에요: `Part`(PM, DESIGN, FRONTEND, BACKEND, OPS), `Activity`, `Timing`, `Tag`, `Category`, `MeetingType`, `EventType`
+- 값은 전부 백엔드 enum 이름이에요: `Part`(PM, DESIGN, FRONTEND, BACKEND, OPS), `Activity`, `Timing`, `Tag`, `MeetingType`, `EventType`
 - 주차(stage)는 `W1, W2, W3, W4_5, W6, W7`. 4~5주차가 하나로 묶여 있어요
 - `guide.json`의 `key`(예: `PM-W2-0`)가 `GuideCheck.itemKey`로 쓰여요. 항목 순서를 바꾸면 기존 체크가 엉키니, 고칠 땐 맨 뒤에 추가하기
 - `demo-data.json`의 `ref`는 파일 안에서 서로 연결하는 키예요 (DB id 아님)

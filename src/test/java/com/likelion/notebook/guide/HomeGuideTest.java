@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * local 프로필: app.today = 2026-10-27, demo-data 일정
  * (프로젝트 시작 10/19, 정기 세션 10/29, 중간발표 11/08 ...)
- * → 2주차(W2), D-12 중간발표, 다음 세션 10/29, 시점 MID
+ * → 2주차(W2), D-12 중간발표, 다음 세션 10/29, 시점 W1_2
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -49,7 +49,7 @@ class HomeGuideTest {
                 .andExpect(jsonPath("$.data.assignment.part").value("PM"))
                 .andExpect(jsonPath("$.data.stage.week").value(2))
                 .andExpect(jsonPath("$.data.stage.stage").value("W2"))
-                .andExpect(jsonPath("$.data.stage.timing").value("MID"))
+                .andExpect(jsonPath("$.data.stage.timing").value("W1_2"))
                 .andExpect(jsonPath("$.data.stage.dday.type").value("MIDTERM"))
                 .andExpect(jsonPath("$.data.stage.dday.daysLeft").value(12))
                 .andExpect(jsonPath("$.data.stage.nextSession.date").value("2026-10-29"))

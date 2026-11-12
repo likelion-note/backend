@@ -161,7 +161,7 @@
 - 구간: 1→W1, 2→W2, 3→W3, 4·5→W4_5, 6→W6, 7 이상→W7
 - D-day: 오늘 이후 가장 가까운 큰 행사(PROJECT_START, SESSION 제외)
 - 다음 정기 세션: D-day와 따로
-- 시점(Timing): 다음 큰 행사까지 14일 이상 FAR, 7~13일 MID, 0~6일 WEEK, 남은 행사 없으면 AFTER
+- 시점(Timing): 다음 큰 행사까지 14일 이상 W2PLUS, 7~13일 W1_2, 0~6일 DURING, 남은 행사 없으면 AFTER
 - 프로젝트 기간: 시작일이 지났고 남은 큰 행사가 있을 때. 아니면 홈에 "지금은 프로젝트 기간이 아니에요"
 - **B 일지 작성의 시점 기본값도 이걸 쓰기**: `stageService.current(cohort).timing()`
 
@@ -201,5 +201,5 @@
 | 파일 | 확인하는 것 |
 |---|---|
 | auth/AuthFlowTest | 가짜 구글 토큰 → NEED_SIGNUP → 틀린 코드 400 → 가입 → JWT로 /api/me → 재로그인 REGISTERED → 토큰 없이 401 |
-| guide/HomeGuideTest | 2주차·D-12·MID 계산, 할 일 체크/해제 반영, 배정 전 빈 할 일, 운영진 403, 다른 파트·주차 가이드 |
+| guide/HomeGuideTest | 2주차·D-12·W1_2 계산, 할 일 체크/해제 반영, 배정 전 빈 할 일, 운영진 403, 다른 파트·주차 가이드 |
 | user/AssignmentServiceTest | 기본 파트 복사, 재배정 이력, 배정 해제, 파트 없음 에러, 운영 분류는 OPS |

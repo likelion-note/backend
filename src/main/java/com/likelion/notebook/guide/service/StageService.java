@@ -20,7 +20,7 @@ import java.util.Optional;
  * - 주차 구간(stage): 1→W1, 2→W2, 3→W3, 4·5→W4_5, 6→W6, 7 이상→W7
  * - D-day: 오늘 이후 가장 가까운 "큰 행사"(PROJECT_START, SESSION 제외)
  * - 다음 정기 세션: D-day와 별도로 표시
- * - 시점(timing): 다음 큰 행사까지 14일 이상 FAR, 7~13일 MID, 0~6일 WEEK, 남은 큰 행사가 없으면 AFTER
+ * - 시점(timing): 다음 큰 행사까지 14일 이상 W2PLUS, 7~13일 W1_2, 0~6일 DURING, 남은 큰 행사가 없으면 AFTER
  * - 프로젝트 기간: 시작일이 지났고 남은 큰 행사가 있을 때
  * B의 일지 작성 기본값(시점)도 이 서비스를 쓰면 됨.
  */
@@ -98,8 +98,8 @@ public class StageService {
 
     static Timing timingOf(Dday dday) {
         if (dday == null) return Timing.AFTER;
-        if (dday.daysLeft() >= 14) return Timing.FAR;
-        if (dday.daysLeft() >= 7) return Timing.MID;
-        return Timing.WEEK;
+        if (dday.daysLeft() >= 14) return Timing.W2PLUS;
+        if (dday.daysLeft() >= 7) return Timing.W1_2;
+        return Timing.DURING;
     }
 }
