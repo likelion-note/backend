@@ -1,14 +1,7 @@
 package com.likelion.notebook.user.entity;
 
 import com.likelion.notebook.global.common.BaseTimeEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,9 +10,6 @@ import lombok.NoArgsConstructor;
 /**
  * 이름(name)은 운영진 멤버 목록에서만 내려줄 것.
  * 노트·검토·알림 응답 DTO에는 절대 포함하지 않기.
- *
- * part = 기본 파트. 운영진이 지정하고, 프로젝트에 배정할 때 ProjectAssignment.part로 복사됨.
- * 화면에 보이는 "지금 파트"는 항상 현재 ProjectAssignment.part를 쓰기.
  */
 @Getter
 @Entity
@@ -48,7 +38,11 @@ public class User extends BaseTimeEntity {
     private Integer cohort; // 기수
 
     @Enumerated(EnumType.STRING)
-    private Part part; // 기본 파트. 지정 전이면 null
+    private Part part; // 배정 전이면 null
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "current_project_id")
+    private ProjectCategory currentProject; // 배정 전이면 null
 
     @Builder
     private User(String email, String googleSub, String name, UserType type, Integer cohort) {
@@ -66,8 +60,13 @@ public class User extends BaseTimeEntity {
         return type == UserType.ADMIN;
     }
 
-    /** 기본 파트 변경. 이미 배정된 프로젝트의 파트는 바뀌지 않음 */
-    public void changeDefaultPart(Part part) {
+    public boolean isAssigned() {
+        return part != null && currentProject != null;
+    }
+
+    /** 배정 변경. 이전 일지는 이전 분류에 남음(일지가 project를 따로 들고 있음) */
+    public void assign(Part part, ProjectCategory project) {
         this.part = part;
+        this.currentProject = project;
     }
 }
