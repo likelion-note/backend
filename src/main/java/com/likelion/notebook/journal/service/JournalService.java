@@ -6,8 +6,13 @@ import com.likelion.notebook.guide.repository.EventRepository;
 import com.likelion.notebook.guide.service.StageService;
 import com.likelion.notebook.journal.dto.JournalFormResponse;
 import com.likelion.notebook.journal.dto.JournalFormResponse.ProjectOption;
+import com.likelion.notebook.journal.dto.JournalSaveRequest;
+import com.likelion.notebook.journal.dto.JournalSaveResponse;
+import com.likelion.notebook.journal.entity.Journal;
 import com.likelion.notebook.journal.entity.JournalEnums.Timing;
+import com.likelion.notebook.journal.repository.JournalRepository;
 import com.likelion.notebook.user.entity.ProjectAssignment;
+import com.likelion.notebook.user.entity.ProjectCategory;
 import com.likelion.notebook.user.entity.User;
 import com.likelion.notebook.user.repository.ProjectAssignmentRepository;
 import com.likelion.notebook.user.repository.UserRepository;
@@ -27,6 +32,7 @@ public class JournalService {
     private final ProjectAssignmentRepository assignmentRepository;
     private final EventRepository eventRepository;
     private final StageService stageService;
+    private final JournalRepository journalRepository;
 
     /** 1. 작성 화면 기본값 */
     @Transactional(readOnly = true)
@@ -44,6 +50,62 @@ public class JournalService {
                 current.map(a -> a.getProject().getId()).orElse(null),
                 current.map(ProjectAssignment::getPart).orElse(user.getPart()),
                 defaultTiming(user.getCohort()));
+    }
+
+    /** 2. 일지 새로 만들기 (DRAFT). 이후 저장은 update */
+    @Transactional
+    public JournalSaveResponse create(Long userId, JournalSaveRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND));
+
+        Journal journal = Journal.builder()
+                .author(user)
+                .project(resolveProject(userId, request.projectId()))
+                .part(request.part())
+                .activity(request.activity())
+                .timing(request.timing())
+                .scope(request.scope())
+                .raw(request.toRaw())
+                .build();
+        return JournalSaveResponse.of(journalRepository.saveAndFlush(journal));
+    }
+
+    /**
+     * 3. 자동 저장. 보낸 body 전체로 덮어씀 (안 보낸 칸은 null). DRAFT·REJECTED만.
+     * AI 정리본(summaryTitle, sum*)은 그대로 둠 → 다시 정리(4번)할 때 덮어씀
+     */
+    @Transactional
+    public JournalSaveResponse update(Long userId, Long journalId, JournalSaveRequest request) {
+        Journal journal = findMine(userId, journalId, "내 일지만 수정할 수 있어요");
+        journal.updateDraft(
+                resolveProject(userId, request.projectId()),
+                request.part(),
+                request.activity(),
+                request.timing(),
+                request.scope(),
+                request.toRaw());
+        journalRepository.flush(); // updatedAt을 응답에 담으려고 바로 반영
+        return JournalSaveResponse.of(journal);
+    }
+
+    /** 내 일지 찾기. 없으면 404, 남의 일지면 403 (문구는 API마다 다름) */
+    private Journal findMine(Long userId, Long journalId, String forbiddenMessage) {
+        Journal journal = journalRepository.findById(journalId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND, "일지를 찾을 수 없어요"));
+        if (!journal.isWrittenBy(userId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN, forbiddenMessage);
+        }
+        return journal;
+    }
+
+    /** projectId가 있으면 내가 배정된 적 있는 프로젝트여야 함 (지난 배정 포함). null = 미분류 */
+    private ProjectCategory resolveProject(Long userId, Long projectId) {
+        if (projectId == null) {
+            return null;
+        }
+        return assignmentRepository.findByUserIdAndProjectId(userId, projectId)
+                .map(ProjectAssignment::getProject)
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_INPUT));
     }
 
     /**
