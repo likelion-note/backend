@@ -182,6 +182,22 @@
 
 ---
 
+## journal/ (B)
+
+### journal/service/JournalService
+- `getForm` (1번 API): 작성 화면 기본값
+  - projects = 배정된 적 있는 프로젝트 전부(지난 배정·운영 분류 포함). 지금 배정이 맨 앞, 나머지는 최근 배정 순
+  - defaultProjectId·defaultPart = 지금 배정. 없으면 null / 기본 파트(users.part)
+  - defaultTiming = `stageService.current(cohort).timing()`. 그 기수 일정이 아예 없으면 null
+  - A의 `ProjectAssignmentRepository`는 수정하지 않고 기존 메서드(`findProjectIdsByUserId` + `findByUserIdAndProjectId`) 조합
+
+### journal/controller/JournalController
+| API | 화면 |
+|---|---|
+| `GET /api/journals/form` | SCR-JOUR-01 성장일지 쓰기 (기본값) |
+
+---
+
 ## 설정
 
 ### application.yml
@@ -203,3 +219,4 @@
 | auth/AuthFlowTest | 가짜 구글 토큰 → NEED_SIGNUP → 틀린 코드 400 → 가입 → JWT로 /api/me → 재로그인 REGISTERED → 토큰 없이 401 |
 | guide/HomeGuideTest | 2주차·D-12·W1_2 계산, 할 일 체크/해제 반영, 배정 전 빈 할 일, 운영진 403, 다른 파트·주차 가이드 |
 | user/AssignmentServiceTest | 기본 파트 복사, 재배정 이력, 배정 해제, 파트 없음 에러, 운영 분류는 OPS |
+| journal/JournalFormTest | 지금 배정이 기본값·지난 배정도 목록에, 배정 전 미분류+기본 파트, 일정 없는 기수 시점 null, 401 |
