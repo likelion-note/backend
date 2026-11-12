@@ -63,7 +63,8 @@ A는 배포·CI/CD도 담당. 추천 노트는 여유 있는 사람이. 기능 �
 ## 코드 규칙
 
 - 모든 API 응답은 `ApiResponse`로 감싸기 (`ApiResponse.ok(data)`)
-- 에러는 `throw new BusinessException(ErrorCode.XXX)`. 새 코드는 `ErrorCode`의 자기 영역에 추가
+- 에러 코드는 **5개만**: `INVALID_INPUT`(400), `UNAUTHORIZED`(401), `FORBIDDEN`(403), `NOT_FOUND`(404), `INTERNAL_ERROR`(500). 새 코드 추가 금지
+- 상황별 문구는 메시지로 구분: `throw new BusinessException(ErrorCode.INVALID_INPUT, "막힌 것을 30자 이상 적어 주세요")`. 메시지 생략 시 기본 문구
 - 로그인 사용자는 컨트롤러에서 `@CurrentUser Long userId`. 지금은 임시로 `X-User-Id` 헤더 값 사용. JWT 붙이면 `CurrentUserArgumentResolver`만 교체 (**배포 전 필수**)
 - 엔티티에 setter 금지. 상태 변경은 엔티티 메서드로 (`journal.submit()`, `approve()`, `reject(reason)`)
 - 엔티티를 그대로 응답하지 않기. 항상 DTO
