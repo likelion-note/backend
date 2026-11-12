@@ -25,6 +25,8 @@ app:
   auth:
     # true면 X-User-Id 헤더와 "dev:" 가짜 구글 토큰을 허용 (로컬 테스트용)
     dev-mode: false
+  # 비우면 실제 오늘(한국 시간). 시연 때 날짜를 고정하려면 APP_TODAY=2026-10-27
+  today: ${APP_TODAY:}
 ---
 # 로컬: H2 메모리 DB. DB 설치 없이 바로 실행됨
 spring:
@@ -45,21 +47,9 @@ spring:
 app:
   auth:
     dev-mode: true
+  # 데모 데이터(seed/demo-data.json) 기준 날짜. 주차·D-day가 데모 화면과 같게 나옴. 지우면 실제 오늘
+  today: 2026-10-27
 
-config:
-  import: optional:application-secret.yml
-
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: GOOGLE_CLIENT_ID
-            client-secret: GOOGLE_CLIENT_SECRET
-            scope:
-              - email
-              - profile
-            redirect-uri: "http://localhost:8080/login/oauth2/code/google"
 ---
 # 배포: 값은 전부 환경변수로 주입. 여기에 비밀번호 적지 않기
 spring:
