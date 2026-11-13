@@ -334,6 +334,27 @@
 
 ---
 
+## 운영진 검토 (B, journal/)
+
+### journal/controller/AdminReviewController
+- 모든 메서드가 `adminChecker.require(userId)`로 시작 (운영진 아니면 FORBIDDEN "운영진만 할 수 있어요")
+
+| API | 화면 |
+|---|---|
+| `GET /api/admin/reviews` | 검토 탭 (pendingCount, pending, recent) |
+| `GET /api/admin/reviews/{journalId}` | 검토 상세 |
+| `POST /api/admin/reviews/{journalId}/approve` | 승인 |
+| `POST /api/admin/reviews/{journalId}/reject` body `{reason}` | 돌려보내기 |
+
+### journal/service/ReviewService
+- 운영진은 **자기 기수 일지만** (운영진 기수 = 아기사자 기수). 다른 기수·임시 저장·없는 일지는 404 "일지를 찾을 수 없어요"
+- `list`: 같은 기수 PENDING `updatedAt` 오래된 순, 본인 일지 제외(그 기수 운영진 1명이면 포함). `recent` = 같은 기수에서 승인·돌려보낸 것 `reviewedAt` 최신 10개 (운영진 전체)
+- `detail`: 공개될 정리본 그대로(원문 X), `authorLabel` = `AuthorLabels.sameCohort`(팀 없음). 처리된 일지도 열람 가능
+- `approve`·`reject`: 404 → 본인 일지 403 "내 일지는 검토할 수 없어요"(운영진 1명이면 허용) → `Journal.approve/reject`(PENDING 아니면 400, 사유 1~200자). 검토자·처리 시각 기록
+- 운영진 1명 판단: `userRepository.countByCohortAndType(cohort, ADMIN) <= 1`
+
+---
+
 ## 설정
 
 ### application.yml
@@ -371,4 +392,8 @@
 | note/NoteDetailTest | 정리본·라벨, 읽음 1회·작성자 제외, 숨김 대상 전부 404(기록도 안 남음), similarNotes 점수순·숨김 노트 제외 |
 | note/NoteHelpTest | 토글·개수, 바로 눌러도 읽음 생김, 내 노트 403, 팀원 노트 404 |
 | note/NoteFixtures | 노트 테스트 데이터 도우미 (승인된 노트, 반응) |
+| journal/ReviewListTest | 같은 기수만·오래된 순·본인 제외, 운영진 1명이면 본인 포함, recent는 운영진 전체·최신순, 아기사자 403 |
+| journal/ReviewDetailTest | 정리본만(원문·작성자 없음)·팀 없는 라벨, 처리된 일지 열람, 임시 저장·다른 기수 404, 아기사자 403 |
+| journal/ReviewApproveTest | 승인 → 검토자·시각 기록·노트 게시판에 보임, 이미 처리 400, 본인 403·운영진 1명이면 허용, 다른 기수 404 |
+| journal/ReviewRejectTest | 사유 저장(앞뒤 공백 제거)·작성자 내 일지에서 보임, 빈 값·201자 400·200자 OK, 이미 처리 400, 본인 403, 다른 기수 404 |
 | journal/JournalSubmitTest | 태그 빼기·전부 빼기, 새 태그 400, 정리본 없음 400, 중복 요청 400, 돌려받은 사유 지움, tags 없음 400, 403 |
