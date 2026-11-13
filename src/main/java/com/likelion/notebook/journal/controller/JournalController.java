@@ -5,6 +5,7 @@ import com.likelion.notebook.global.common.ApiResponse;
 import com.likelion.notebook.journal.dto.JournalFormResponse;
 import com.likelion.notebook.journal.dto.JournalSaveRequest;
 import com.likelion.notebook.journal.dto.JournalSaveResponse;
+import com.likelion.notebook.journal.dto.JournalSubmitRequest;
 import com.likelion.notebook.journal.dto.JournalSummaryResponse;
 import com.likelion.notebook.journal.service.JournalService;
 import jakarta.validation.Valid;
@@ -49,5 +50,13 @@ public class JournalController {
     @PostMapping("/{id}/summary")
     public ApiResponse<JournalSummaryResponse> summarize(@CurrentUser Long userId, @PathVariable Long id) {
         return ApiResponse.ok(journalService.summarize(userId, id));
+    }
+
+    /** 5. 검토 요청 */
+    @PostMapping("/{id}/submit")
+    public ApiResponse<JournalSaveResponse> submit(@CurrentUser Long userId,
+                                                   @PathVariable Long id,
+                                                   @Valid @RequestBody JournalSubmitRequest request) {
+        return ApiResponse.ok(journalService.submit(userId, id, request));
     }
 }

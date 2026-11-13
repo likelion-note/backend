@@ -267,7 +267,19 @@
   - A의 `ProjectAssignmentRepository`는 수정하지 않고 기존 메서드(`findProjectIdsByUserId` + `findByUserIdAndProjectId`) 조합
 - `create` (2번 API): DRAFT 일지 생성. projectId는 배정된 적 있는 프로젝트만(아니면 INVALID_INPUT), null = 미분류
 - `update` (3번 API): 보낸 body 전체로 덮어씀(안 보낸 칸은 null). DRAFT·REJECTED만. AI 정리본은 그대로
+- `summarize` (4번 API): `Journal.checkReadyForSummary`(상태 → 활동·시점·공개 범위 → 막힌 것 30자 → 넘긴 방법) → `AiClient` → `applySummary`. 보완 질문은 처음 정리할 때만(저장 안 함). `AiClientException`이면 INTERNAL_ERROR, 원문 유지. 태그는 중복 빼고 최대 3개
+- `submit` (5번 API): `Journal.submit(keptTags)` → 태그는 빼기만(새 태그면 400), PENDING으로, 돌려받은 사유 지움
 - `findMine`: 없으면 NOT_FOUND "일지를 찾을 수 없어요", 남의 일지면 FORBIDDEN (문구는 API마다)
+
+### journal/service/AuthorLabels
+- 익명 작성자 표시. `sameCohort`(14기 · PM, 검토 화면도 이것), `pastCohort`(지난 기수 B팀 · PM, 미분류면 팀 생략), 운영진은 "14기 운영진"/"지난 기수 운영진", 파트 없으면 생략
+- `preview`·`audience`: 4번 미리보기 (NOW "지금 14기에게 (같은 팀원 제외)", NEXT "다음 기수(15기)부터")
+- 팀 가명은 지금 `ProjectCategory.teamLetter`("B" → "B팀"). ERD 이름은 anon_label
+
+### journal/ai/AiClient
+- AI 호출은 이 인터페이스로만. 지금 구현은 `FakeAiClient`(고정 제목·태그·보완 질문, 정리본 = 원문 그대로, 이름 안 가림)
+- 실제 구현은 Gemini 예정, 키는 `AI_API_KEY`. 추가하면 키 있을 때만 쓰이게 조건 붙이기
+- 실패는 `AiClientException`
 
 ### journal/controller/JournalController
 | API | 화면 |
@@ -275,6 +287,8 @@
 | `GET /api/journals/form` | SCR-JOUR-01 성장일지 쓰기 (기본값) |
 | `POST /api/journals` | SCR-JOUR-01 첫 입력 (임시 저장, id 발급) |
 | `PUT /api/journals/{id}` | SCR-JOUR-01 자동 저장 (입력 멈추고 3초 뒤) |
+| `POST /api/journals/{id}/summary` | SCR-JOUR-02 AI로 정리하기 |
+| `POST /api/journals/{id}/submit` body `{tags}` | SCR-JOUR-02 검토 요청 |
 
 ### global/exception/GlobalExceptionHandler (B가 추가)
 - `HttpMessageNotReadableException`(깨진 JSON, 값 목록에 없는 enum), `MethodArgumentTypeMismatchException`(경로 변수 타입) → 400 INVALID_INPUT. 전에는 500으로 나갔음
@@ -307,3 +321,7 @@
 | journal/JournalFormTest | 지금 배정이 기본값·지난 배정도 목록에, 배정 전 미분류+기본 파트, 일정 없는 기수 시점 null, 401 |
 | journal/JournalWriteTest | 일지 생성, 빈 body 미분류, 남의 프로젝트 400, 잘못된 enum 400, 2000자 초과 400, 401 |
 | journal/JournalAutoSaveTest | 전체 덮어쓰기, AI 정리본 유지, PENDING 수정 400, 남의 일지 403, 없는 일지 404, id 타입 400 |
+| journal/FakeAiClientTest | 키 없으면 FakeAiClient 주입, 고정 응답, 보완 질문은 처음만 |
+| journal/JournalSummaryTest | 정리·미리보기, 보완 질문 처음만, 팀 가명·미분류, 운영진·파트 없음 표시, 필수 조건 3종 400, PENDING 400, 403/404 |
+| journal/JournalSummaryAiFailTest | AI 실패 시 500, 원문 유지 (AiClient를 MockitoBean으로) |
+| journal/JournalSubmitTest | 태그 빼기·전부 빼기, 새 태그 400, 정리본 없음 400, 중복 요청 400, 돌려받은 사유 지움, tags 없음 400, 403 |

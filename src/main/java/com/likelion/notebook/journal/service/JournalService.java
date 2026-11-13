@@ -7,6 +7,7 @@ import com.likelion.notebook.guide.service.StageService;
 import com.likelion.notebook.journal.ai.AiClient;
 import com.likelion.notebook.journal.ai.AiClientException;
 import com.likelion.notebook.journal.dto.JournalFormResponse;
+import com.likelion.notebook.journal.dto.JournalSubmitRequest;
 import com.likelion.notebook.journal.dto.JournalSummaryResponse;
 import com.likelion.notebook.journal.entity.JournalEnums.Tag;
 import com.likelion.notebook.journal.dto.JournalFormResponse.ProjectOption;
@@ -128,6 +129,15 @@ public class JournalService {
                 AuthorLabels.preview(journal),
                 AuthorLabels.audience(journal),
                 result.followUpQuestion());
+    }
+
+    /** 5. 검토 요청. 태그를 최종 확인하고 PENDING으로 (규칙은 Journal.submit) */
+    @Transactional
+    public JournalSaveResponse submit(Long userId, Long journalId, JournalSubmitRequest request) {
+        Journal journal = findMine(userId, journalId, "내 일지만 요청할 수 있어요");
+        journal.submit(request.tags().stream().filter(Objects::nonNull).distinct().toList());
+        journalRepository.flush(); // updatedAt(검토 대기열 정렬 기준)을 응답에 담으려고 바로 반영
+        return JournalSaveResponse.of(journal);
     }
 
     /** 내 일지 찾기. 없으면 404, 남의 일지면 403 (문구는 API마다 다름) */
