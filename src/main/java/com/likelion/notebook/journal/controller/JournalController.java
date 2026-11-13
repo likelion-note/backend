@@ -3,6 +3,7 @@ package com.likelion.notebook.journal.controller;
 import com.likelion.notebook.global.auth.CurrentUser;
 import com.likelion.notebook.global.common.ApiResponse;
 import com.likelion.notebook.journal.dto.JournalFormResponse;
+import com.likelion.notebook.journal.dto.MyJournalsResponse;
 import com.likelion.notebook.journal.dto.JournalSaveRequest;
 import com.likelion.notebook.journal.dto.JournalSaveResponse;
 import com.likelion.notebook.journal.dto.JournalSubmitRequest;
@@ -29,6 +30,12 @@ public class JournalController {
     @GetMapping("/form")
     public ApiResponse<JournalFormResponse> form(@CurrentUser Long userId) {
         return ApiResponse.ok(journalService.getForm(userId));
+    }
+
+    /** 6. 내 기록 */
+    @GetMapping("/me")
+    public ApiResponse<MyJournalsResponse> mine(@CurrentUser Long userId) {
+        return ApiResponse.ok(journalService.getMine(userId));
     }
 
     /** 2. 일지 새로 만들기 (임시 저장) */
