@@ -1,10 +1,15 @@
 package com.likelion.notebook.journal.ai;
 
 import com.likelion.notebook.journal.ai.AiClient.JournalInput;
+import com.likelion.notebook.journal.ai.AiClient.PortfolioEntry;
+import com.likelion.notebook.journal.ai.AiClient.PortfolioInput;
+import com.likelion.notebook.journal.entity.JournalEnums.PortfolioFormat;
 import com.likelion.notebook.journal.entity.JournalBody;
 import com.likelion.notebook.journal.entity.JournalEnums.Tag;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.IntStream;
 import java.util.stream.Collectors;
 
 /** Gemini에 보내는 지시문. 응답 모양은 GeminiAiClient의 responseSchema로 고정 */
@@ -58,6 +63,47 @@ final class GeminiPrompts {
                         : "null",
                 label(input.part()), label(input.activity()), label(input.timing()),
                 text(raw.getStuck()), text(raw.getSolved()), text(raw.getAgain()), text(raw.getMemo()));
+    }
+
+    static String portfolio(PortfolioInput input) {
+        String format = input.format() == PortfolioFormat.RESUME_3LINES
+                ? "이력서에 넣을 3줄. 각 줄은 \"- \"로 시작하는 한 문장이고 줄바꿈으로 구분. 개조식(\"~함\", \"~구현\")으로"
+                : "자기소개서·면접용 경험 서술 한 단락 (4~6문장, 줄바꿈 없이). 상황 → 내가 한 일 → 결과 → 배운 점 순서, 합니다체로";
+        List<PortfolioEntry> journals = input.journals();
+        String entries = IntStream.range(0, journals.size())
+                .mapToObj(i -> {
+                    PortfolioEntry e = journals.get(i);
+                    JournalBody raw = e.raw();
+                    return """
+                            ## 일지 %d (활동: %s / 시점: %s)
+                            [막힌 것] %s
+                            [어떻게 넘겼나] %s
+                            [다시 한다면] %s
+                            [메모] %s
+                            """.formatted(i + 1, label(e.activity()), label(e.timing()),
+                            text(raw.getStuck()), text(raw.getSolved()), text(raw.getAgain()), text(raw.getMemo()));
+                })
+                .collect(Collectors.joining("\n"));
+
+        return """
+                너는 멋쟁이사자처럼 동아리 앱 "멋사수첩"의 포트폴리오 도우미야.
+                아래는 한 사람이 한 프로젝트에서 쓴 성장일지(막혔던 순간과 넘긴 방법)들이야. 이걸 근거로 그 사람의 경험을 요약해.
+
+                [형식]
+                %s
+
+                [규칙]
+                1. 일지에 적힌 사실만 써. 없는 경험·기술·역할을 지어내지 마.
+                2. 숫자·성과·결과물처럼 본인이 직접 채워야 하는 건 지어내지 말고 ⟪숫자⟫, ⟪결과⟫, ⟪기술⟫처럼 ⟪⟫ 빈칸으로 남겨.
+                3. 다른 사람 이름은 쓰지 말고 "팀원"으로. 주어는 이 사람(나)으로.
+                4. 막혔던 문제를 어떻게 풀었는지가 드러나게 써.
+                5. result에 요약 본문만 넣어. 머리말·설명은 붙이지 마.
+
+                [프로젝트] %s
+                [파트] %s
+
+                %s
+                """.formatted(format, text(input.projectTitle()), label(input.part()), entries);
     }
 
     private static String label(Enum<?> value) {
