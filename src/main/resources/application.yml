@@ -15,6 +15,9 @@ server:
 app:
   cors:
     allowed-origins: ${CORS_ORIGINS:http://localhost:5173,http://localhost:3000,https://likelionnote.vercel.app}
+  ai:
+    api-key: ${AI_API_KEY:}           # 비어 있으면 FakeAiClient 사용
+    model: ${AI_MODEL:gemini-3.5-flash-lite}
   google:
     client-id: ${GOOGLE_CLIENT_ID:}
   jwt:

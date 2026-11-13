@@ -47,4 +47,6 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    // 테스트는 실제 AI를 부르지 않게 키를 비움 → FakeAiClient (PC에 AI_API_KEY가 있어도)
+    environment 'AI_API_KEY', ''
 }

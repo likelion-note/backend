@@ -4,7 +4,12 @@ import com.likelion.notebook.global.common.ErrorCode;
 import com.likelion.notebook.global.exception.BusinessException;
 import com.likelion.notebook.guide.repository.EventRepository;
 import com.likelion.notebook.guide.service.StageService;
+import com.likelion.notebook.journal.ai.AiClient;
+import com.likelion.notebook.journal.ai.AiClientException;
 import com.likelion.notebook.journal.dto.JournalFormResponse;
+import com.likelion.notebook.journal.dto.JournalSubmitRequest;
+import com.likelion.notebook.journal.dto.JournalSummaryResponse;
+import com.likelion.notebook.journal.entity.JournalEnums.Tag;
 import com.likelion.notebook.journal.dto.JournalFormResponse.ProjectOption;
 import com.likelion.notebook.journal.dto.JournalSaveRequest;
 import com.likelion.notebook.journal.dto.JournalSaveResponse;
@@ -17,13 +22,16 @@ import com.likelion.notebook.user.entity.User;
 import com.likelion.notebook.user.repository.ProjectAssignmentRepository;
 import com.likelion.notebook.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class JournalService {
@@ -33,6 +41,9 @@ public class JournalService {
     private final EventRepository eventRepository;
     private final StageService stageService;
     private final JournalRepository journalRepository;
+    private final AiClient aiClient;
+
+    private static final int MAX_TAGS = 3;
 
     /** 1. 작성 화면 기본값 */
     @Transactional(readOnly = true)
@@ -85,6 +96,47 @@ public class JournalService {
                 request.scope(),
                 request.toRaw());
         journalRepository.flush(); // updatedAt을 응답에 담으려고 바로 반영
+        return JournalSaveResponse.of(journal);
+    }
+
+    /**
+     * 4. AI 정리. 저장된 원문으로 제목·태그·이름 가린 정리본을 만들어 저장.
+     * 보완 질문은 처음 정리할 때만 받고 DB에 저장하지 않음. AI 실패 시 원문은 그대로 두고 500
+     */
+    @Transactional
+    public JournalSummaryResponse summarize(Long userId, Long journalId) {
+        Journal journal = findMine(userId, journalId, "내 일지만 정리할 수 있어요");
+        journal.checkReadyForSummary();
+
+        AiClient.JournalSummary result;
+        try {
+            result = aiClient.summarizeJournal(new AiClient.JournalInput(
+                    journal.getPart(), journal.getActivity(), journal.getTiming(), journal.getRaw(),
+                    !journal.isSummarized()));
+        } catch (AiClientException e) {
+            log.warn("AI 정리 실패 journalId={}", journalId, e);
+            throw new BusinessException(ErrorCode.INTERNAL_ERROR, "정리에 실패했어요. 잠시 후 다시 시도해 주세요");
+        }
+
+        List<Tag> tags = result.tags() == null ? List.of()
+                : result.tags().stream().filter(Objects::nonNull).distinct().limit(MAX_TAGS).toList();
+        journal.applySummary(result.title(), result.body(), tags);
+
+        return new JournalSummaryResponse(
+                journal.getSummaryTitle(),
+                journal.getTags(),
+                JournalSummaryResponse.Body.of(journal.getSummary()),
+                AuthorLabels.preview(journal),
+                AuthorLabels.audience(journal),
+                result.followUpQuestion());
+    }
+
+    /** 5. 검토 요청. 태그를 최종 확인하고 PENDING으로 (규칙은 Journal.submit) */
+    @Transactional
+    public JournalSaveResponse submit(Long userId, Long journalId, JournalSubmitRequest request) {
+        Journal journal = findMine(userId, journalId, "내 일지만 요청할 수 있어요");
+        journal.submit(request.tags().stream().filter(Objects::nonNull).distinct().toList());
+        journalRepository.flush(); // updatedAt(검토 대기열 정렬 기준)을 응답에 담으려고 바로 반영
         return JournalSaveResponse.of(journal);
     }
 

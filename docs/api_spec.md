@@ -17,6 +17,7 @@
 | JSON 키 | camelCase |
 | 값 | 전부 대문자 (DB도 대문자로 저장) |
 | 익명성 | 노트·검토 응답에 작성자 id·이름·projectId 없음. 작성자 표시는 `authorLabel` 문자열 하나 |
+| 운영진 권한 | `/api/admin/**`는 A의 공통 체크(`AdminChecker`) 한 곳에서. 운영진 아니면 `403 FORBIDDEN` "운영진만 할 수 있어요" |
 
 ### 값 목록
 
@@ -88,7 +89,7 @@ AI 정리 때 일지 내용을 보고 붙이는 "어떤 상황이었나" 라벨.
 - `projects` = 내가 `project_member`로 들어 있는 프로젝트. 운영진은 `OPERATION` 분류도 포함
 - `defaultProjectId` = `is_current = true`인 프로젝트. 없으면 `null`(미분류)
 - `defaultPart` = 그 프로젝트의 `project_member.part`. 없으면 `users.part`
-- `defaultTiming` = 일정(`events`)의 가장 가까운 `MAJOR` 행사 기준으로 계산. 계산 못 하면 `null`
+- `defaultTiming` = A 홈과 같은 계산(`StageService`): 다음 큰 행사까지 14일 이상 `W2PLUS`, 7~13일 `W1_2`, 0~6일 `DURING`, 남은 행사 없으면 `AFTER`. 그 기수 일정이 아예 없으면 `null`
 - `activity`는 기본값 없음 (직접 고르기)
 
 **에러**
@@ -244,6 +245,8 @@ AI 정리 때 일지 내용을 보고 붙이는 "어떤 상황이었나" 라벨.
 | 403 | FORBIDDEN | 내 일지만 정리할 수 있어요 | |
 | 404 | NOT_FOUND | 일지를 찾을 수 없어요 | |
 | 500 | INTERNAL_ERROR | 정리에 실패했어요. 잠시 후 다시 시도해 주세요 | AI 호출 실패 |
+
+**AI 연동**: 서버는 `AiClient` 인터페이스로만 부름. `AI_API_KEY` 환경변수가 있으면 Gemini, 없으면 `FakeAiClient`(고정 응답, 이름 가리기 안 함). 응답 형식은 같음
 
 ---
 
@@ -559,6 +562,7 @@ AI 정리 때 일지 내용을 보고 붙이는 "어떤 상황이었나" 라벨.
 {
   "success": true,
   "data": {
+    "pendingCount": 1,
     "pending": [
       {
         "journalId": 12,
@@ -579,6 +583,7 @@ AI 정리 때 일지 내용을 보고 붙이는 "어떤 상황이었나" 라벨.
 
 **규칙**
 
+- `pendingCount`: 검토 대기 개수 (`pending` 개수와 같음). 검토 탭 위 숫자. 같은 줄의 미배정·다음 행사 숫자는 프론트가 A의 members·events API에서 가져감
 - `pending`: `PENDING`, `updated_at` 오래된 순. `requestedAt` = `updated_at`
 - 본인 일지는 빼기. 단 운영진이 1명뿐이면 포함
 - `recent`: `reviewed_at` 최신순 10개
@@ -787,6 +792,10 @@ AI 정리 때 일지 내용을 보고 붙이는 "어떤 상황이었나" 라벨.
 
 - 노트 카드 모양(8번)을 회의 도우미 "관련 노트"에서도 씀
 - 명세의 "분류가 회의인 노트"는 분류 컬럼을 빼서 태그 `MEETING_RUN`으로 대신 (`GET /api/notes?tag=MEETING_RUN&size=2`)
-- 홈 배너의 노트·검토 대기 개수는 B 데이터 → 필요하면 개수 API 따로 추가
+- 아기사자 홈(`GET /api/home`, A)에 B 필드 2개. A의 `HomeService`가 B 서비스 메서드를 호출 (B는 API 추가 없이 메서드만 준비)
+  - `journalBanner`: 내 일지 중 돌려받음(`REJECTED`)·검토 중(`PENDING`) 개수
+  - `noteImpact`: 내 공개 노트(`APPROVED`)의 읽음·도움돼요 합계 (`note_reaction`)
+- 회의 불러오기(일지 작성 화면): 프론트가 A의 `GET /api/meetings?days=7`을 호출. B는 API 추가 없음
+- 운영 분류(`OPERATION`) 배정의 파트는 `OPS` (ERD 코멘트의 NULL 대신)
 - `project_member.part`, `is_current`, `anon_label`은 A가 배정할 때 채워줘야 B 쪽 기본값·표시가 맞음
 

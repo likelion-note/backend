@@ -40,11 +40,11 @@
 ```
 배포: `SPRING_PROFILES_ACTIVE=prod`, `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `CORS_ORIGINS`. 비밀값은 yml에 쓰지 않기.
 
-## 현재 상태 (2026-11-12)
+## 현재 상태 (2026-11-13)
 
-- A 완료: 구글 로그인 + 초대코드 가입 + JWT(`Authorization: Bearer`), local 전용 `X-User-Id`(`app.auth.dev-mode`), `/api/me`, 배정(`AssignmentService`). 자세한 건 `docs/code_map.md`
+- A 완료: 구글 로그인 + 초대코드 가입 + JWT(`Authorization: Bearer`), local 전용 `X-User-Id`(`app.auth.dev-mode`), `/api/me`, 배정, 홈·가이드, 운영진 멤버·일정, 회의. 자세한 건 `docs/code_map.md`
 - `ErrorCode` 공통 5개로 정리 완료 (A). 문구는 `new BusinessException(code, message)`로 전달
-- B(journal·note): 엔티티는 확정 ERD에 맞춤 완료. `controller / service / dto`는 아직 없음
+- B(journal·note): 엔티티는 확정 ERD에 맞춤 완료. 일지 작성 API 1~3번은 PR #9 (리뷰 중)
 - `./gradlew test` 통과. `gradlew` 래퍼 있음
 - **로컬 JDK는 17 사용.** PC에 JDK 27도 설치돼 있지만 Gradle 래퍼(9.3.0)는 JDK 17로만 확인함. 빌드가 이상하면 `JAVA_HOME`이 jdk-17을 가리키는지 먼저 확인
 - **A 영역 엔티티는 아직 확정 ERD와 다 맞지는 않음** → 아래 "ERD 맞추기" 참고
@@ -66,10 +66,12 @@
 **A (user·auth·guide·meeting)**
 - [x] `Part`: `OPS` 추가
 - [x] `User`: `currentProject` 삭제. 지금 팀은 배정의 `is_current`로 찾기
-- [x] 배정에 `part`, `isCurrent` 추가. 재배정 시 행을 지우지 않고 `false`로 → 단, 코드는 아직 `ProjectAssignment`(ERD는 `project_member`). 운영 분류 파트도 코드는 `OPS`, ERD는 NULL
+- [x] 배정에 `part`, `isCurrent` 추가. 재배정 시 행을 지우지 않고 `false`로 → 단, 코드는 아직 `ProjectAssignment`(ERD는 `project_member`)
+- [x] 운영 분류(OPERATION) 배정의 파트는 `OPS`로 확정 (ERD 코멘트의 NULL 대신)
 - [ ] `ProjectCategory`: `anonLabel` (코드는 `teamLetter`라는 이름으로 있음)
 - [ ] `InviteCode`: `expiresAt` NULL 허용 (NULL = 만료 없음)
-- [ ] `MeetingType`: `FIRST`, `IDEA`, `MIDCHECK`, `RETRO` / `EventType`: `KICKOFF`, `MAJOR`, `REGULAR` / `ProjectKind`: `TEAM`, `OPERATION`
+- [ ] `MeetingType`: `FIRST`, `IDEA`, `MIDCHECK`, `RETRO` / `ProjectKind`: `TEAM`, `OPERATION`
+- **미정, 건드리지 말 것**: `EventType`(`events.type`) 값. 코드는 `PROJECT_START`·`SESSION`·`MIDTERM` 등, ERD는 `KICKOFF`·`MAJOR`·`REGULAR`. A·B가 정하는 중
 
 ## 패키지와 담당 (백엔드 2명)
 
@@ -96,7 +98,9 @@ A(언니)는 배포(AWS EC2)·CI/CD도 담당. 기능 폴더 안은 `controller 
 
 ## 코드 규칙
 
-- 로그인 사용자는 컨트롤러에서 `@CurrentUser Long userId`. **이게 붙은 API만 로그인 필요**하니 빠뜨리지 않기. 운영진 여부는 서비스에서 따로 확인
+- 로그인 사용자는 컨트롤러에서 `@CurrentUser Long userId`. **이게 붙은 API만 로그인 필요**하니 빠뜨리지 않기
+- 운영진 권한(`/api/admin/**`)은 A의 `AdminChecker.require(userId)` 한 곳에서. B는 따로 만들지 않고 이걸 부르기 (운영진 아니면 FORBIDDEN "운영진만 할 수 있어요")
+- "오늘"은 `LocalDate.now(clock)` (`ClockConfig`, local은 `app.today`로 날짜 고정)
 - 엔티티에 setter 금지. 상태 변경은 엔티티 메서드로 (`journal.submit()`, `approve()`, `reject(reason)`)
 - 엔티티를 그대로 응답하지 않기. 항상 DTO
 - 브랜치: `main` ← `develop` ← `feat/기능명`
@@ -109,6 +113,10 @@ A(언니)는 배포(AWS EC2)·CI/CD도 담당. 기능 폴더 안은 `controller 
 - 태그는 검토 요청 때 **빼기만** 가능 (추가·변경 불가)
 - 노트 검색 대상은 제목·본문·태그. `authorLabel`(팀 가명)은 검색 안 함
 - 명세의 "분류가 회의인 노트"는 태그 `MEETING_RUN`으로 대신 (`GET /api/notes?tag=MEETING_RUN&size=2`)
+- 시점(timing) 계산은 A 홈과 같은 함수 하나를 같이 씀: `StageService.current(cohort).timing()`. 다음 큰 행사까지 14일 이상 `W2PLUS`, 7~13일 `W1_2`, 0~6일 `DURING`, 남은 행사 없으면 `AFTER`
+- 회의 불러오기: 프론트가 A의 `GET /api/meetings?days=7`을 호출. B는 API 추가 없음
+- AI: `AiClient` 인터페이스로만 부르기. `AI_API_KEY`(yml `app.ai.api-key`)가 있으면 Gemini(`GeminiAiClient`, 모델 `AI_MODEL`), 비어 있으면 `FakeAiClient`(고정 응답, 이름 안 가림). 테스트는 항상 Fake
+- 홈(`/api/home`, A)에 B 필드 2개: `journalBanner`(돌려받음·검토 중 개수), `noteImpact`(내 공개 노트 읽음·도움돼요 합계). A의 `HomeService`가 B 서비스 메서드를 호출 → B는 메서드만 준비
 
 ## 익명성 규칙 (가장 중요)
 
@@ -120,11 +128,7 @@ A(언니)는 배포(AWS EC2)·CI/CD도 담당. 기능 폴더 안은 `controller 
 
 ## 명세 ↔ 데모 차이
 
-정해진 것: 일지 필수(넘긴 방법도 필수), 자동 저장(입력 멈추고 3초 뒤), 초대코드 만료(`expiresAt` NULL = 만료 없음, `isUsable()`에서 체크). 추천 점수는 추천 노트가 시연 제외라 보류.
-
-| 항목 | 명세 | 데모 |
-|---|---|---|
-| 회의 불러오기 | 지난 7일 | 문구는 "이번 주" |
+정해진 것: 일지 필수(넘긴 방법도 필수), 자동 저장(입력 멈추고 3초 뒤), 초대코드 만료(`expiresAt` NULL = 만료 없음, `isUsable()`에서 체크), 회의 불러오기(지난 7일, `GET /api/meetings?days=7`). 추천 점수는 추천 노트가 시연 제외라 보류.
 
 아직 정해지지 않은 것: 운영진이 1명일 때 검토, 미분류 일지 포트폴리오.
 
@@ -132,7 +136,7 @@ A(언니)는 배포(AWS EC2)·CI/CD도 담당. 기능 폴더 안은 `controller 
 
 1. ~~`./gradlew test` 통과시키기~~ 완료
 2. ~~A: 구글 로그인 + 초대코드 → JWT, local 전용 `X-User-Id`~~ 완료
-3. 엔티티를 확정 ERD에 맞추기 (위 "ERD 맞추기", 각자 영역)
-4. B: `docs/api_spec.md` 대로 일지 작성·자동 저장 API부터 (`X-User-Id`로 local 테스트 가능)
+3. 엔티티를 확정 ERD에 맞추기 (위 "ERD 맞추기", 각자 영역. B는 완료)
+4. B 순서: ~~일지 작성·자동 저장(1~3번)~~ PR #9 → 일지 정리(4번) → 검토 요청(5번) → 내 기록·내 일지 상세(6~7번) → 노트(8~10번) → 검토(11~14번) → 포트폴리오(15~16번). 홈 B 필드(`journalBanner`, `noteImpact`) 메서드도 준비
 5. A 파트 API 명세를 `docs/api_spec.md`로 옮기기 (프론트와 공유)
 6. 시드 로더: `guide.json`, `meeting-helper.json`은 시작 시 메모리로, `demo-data.json`은 `local` 프로필에서만 DB로
