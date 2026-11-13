@@ -6,8 +6,34 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface JournalRepository extends JpaRepository<Journal, Long> {
+
+    /**
+     * 노트(8~10번) 공개 조건. 익명성 규칙이라 반드시 이 쿼리로만 거르기 (프론트 필터링 금지)
+     * status = APPROVED 이고
+     *   - 내가 쓴 노트, 또는
+     *   - 지난 기수 노트 (scope 상관없음), 또는
+     *   - 같은 기수 + NOW + (미분류 또는 내가 그 프로젝트에 배정된 적 없음 — 지난 배정 포함)
+     */
+    String VISIBLE_NOTE = """
+            j.status = com.likelion.notebook.journal.entity.JournalEnums.Status.APPROVED and (
+                a.id = :viewerId
+                or a.cohort < :cohort
+                or (a.cohort = :cohort
+                    and j.scope = com.likelion.notebook.journal.entity.JournalEnums.Scope.NOW
+                    and (p is null or not exists (
+                        select 1 from ProjectAssignment pa where pa.project = p and pa.user.id = :viewerId))))
+            """;
+
+    /** 8. 노트 목록: 내가 볼 수 있는 노트 전부 (검색·필터·정렬·페이징은 NoteService) */
+    @Query("select j from Journal j join fetch j.author a left join fetch j.project p where " + VISIBLE_NOTE)
+    List<Journal> findVisibleNotes(Long viewerId, Integer cohort);
+
+    /** 9·10. 노트 하나. 볼 수 없으면 empty → 404 (있다는 것도 알리지 않음) */
+    @Query("select j from Journal j join fetch j.author a left join fetch j.project p where j.id = :journalId and " + VISIBLE_NOTE)
+    Optional<Journal> findVisibleNote(Long journalId, Long viewerId, Integer cohort);
 
     /** 6. 내 기록 탭: 내 일지 전부 + 프로젝트(한 번에), 최근 수정 순 */
     @Query("select j from Journal j left join fetch j.project where j.author.id = :authorId order by j.updatedAt desc, j.id desc")
@@ -27,14 +53,4 @@ public interface JournalRepository extends JpaRepository<Journal, Long> {
     /** 포트폴리오: 프로젝트별 내 일지 (임시 저장 제외) */
     List<Journal> findByAuthorIdAndProjectIdAndStatusNotOrderByCreatedAtAsc(Long authorId, Long projectId, Status status);
 
-    /*
-     * TODO(B): 노트 게시판 조회 쿼리. 공개 조건을 반드시 여기(서버)에서 거르기.
-     *   status = APPROVED
-     *   and ( author.cohort < 내 기수
-     *         or (author.cohort = 내 기수 and scope = NOW
-     *             and (project is null or 내가 그 project의 배정 행(is_current=false 포함)에 없음)) )
-     *   작성자 본인 노트는 항상 보임. 미분류(project null)는 숨기지 않음.
-     *   + 파트·시점·태그 필터, 검색어(제목·본문·태그. authorLabel/팀 가명은 검색 안 함)
-     * 태그는 JSON 컬럼이라 필터는 문자열 비교(tags like '%"STACK"%')로. H2·MySQL 둘 다 동작.
-     */
 }
