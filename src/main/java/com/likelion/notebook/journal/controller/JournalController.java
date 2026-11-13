@@ -5,6 +5,7 @@ import com.likelion.notebook.global.common.ApiResponse;
 import com.likelion.notebook.journal.dto.JournalFormResponse;
 import com.likelion.notebook.journal.dto.JournalSaveRequest;
 import com.likelion.notebook.journal.dto.JournalSaveResponse;
+import com.likelion.notebook.journal.dto.JournalSummaryResponse;
 import com.likelion.notebook.journal.service.JournalService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -42,5 +43,11 @@ public class JournalController {
                                                    @PathVariable Long id,
                                                    @Valid @RequestBody JournalSaveRequest request) {
         return ApiResponse.ok(journalService.update(userId, id, request));
+    }
+
+    /** 4. AI 정리 (Body 없음) */
+    @PostMapping("/{id}/summary")
+    public ApiResponse<JournalSummaryResponse> summarize(@CurrentUser Long userId, @PathVariable Long id) {
+        return ApiResponse.ok(journalService.summarize(userId, id));
     }
 }

@@ -131,23 +131,51 @@ public class Journal extends BaseTimeEntity {
         this.raw = raw;
     }
 
+    /** 한 번이라도 AI 정리를 했는지 (보완 질문은 처음 정리할 때만) */
+    public boolean isSummarized() {
+        return summaryTitle != null;
+    }
+
+    /** 4. AI 정리 전 확인: 상태 → 필수 조건(처음 걸린 것 하나만) */
+    public void checkReadyForSummary() {
+        if (status != Status.DRAFT && status != Status.REJECTED) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "지금은 정리할 수 없어요");
+        }
+        if (activity == null || timing == null || scope == null) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "활동·시점·공개 범위를 골라 주세요");
+        }
+        if (raw == null || raw.getStuck() == null || raw.getStuck().strip().length() < STUCK_MIN_LENGTH) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "막힌 것을 30자 이상 써 주세요");
+        }
+        if (raw.getSolved() == null || raw.getSolved().isBlank()) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "넘긴 방법을 써 주세요");
+        }
+    }
+
     public void applySummary(String title, JournalBody summary, List<Tag> tags) {
         this.summaryTitle = title;
         this.summary = summary;
         this.tags = new ArrayList<>(tags);
     }
 
-    /** 검토 요청 (처음 제출 + 돌려받은 뒤 다시 제출) */
-    public void submit() {
+    /**
+     * 5. 검토 요청 (처음 제출 + 돌려받은 뒤 다시 제출).
+     * 태그는 AI가 준 것 중에서 빼기만 가능 (0개도 됨). 돌려받은 사유는 지움
+     */
+    public void submit(List<Tag> keptTags) {
         if (status != Status.DRAFT && status != Status.REJECTED) {
             throw new BusinessException(ErrorCode.INVALID_INPUT, "이미 검토 요청한 일지예요");
+        }
+        if (!isSummarized() || summary == null || scope == null) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "먼저 AI 정리를 해 주세요");
+        }
+        if (!tags.containsAll(keptTags)) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "태그는 정리된 것 중에서만 고를 수 있어요");
         }
         if (raw == null || raw.getStuck() == null || raw.getStuck().strip().length() < STUCK_MIN_LENGTH) {
             throw new BusinessException(ErrorCode.INVALID_INPUT, "막힌 것을 30자 이상 써 주세요");
         }
-        if (summary == null || scope == null) {
-            throw new BusinessException(ErrorCode.INVALID_INPUT, "먼저 AI 정리를 해 주세요");
-        }
+        this.tags = tags.stream().filter(keptTags::contains).toList();
         this.status = Status.PENDING;
         this.rejectReason = null;
     }

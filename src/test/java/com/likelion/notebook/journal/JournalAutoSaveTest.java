@@ -79,7 +79,7 @@ class JournalAutoSaveTest {
         Journal journal = journalRepository.save(Journal.builder().author(user).scope(Scope.NOW)
                 .raw(new JournalBody(STUCK_30, "넘긴 방법", null, null)).build());
         journal.applySummary("제목", new JournalBody("정리", "정리", null, null), List.of());
-        journal.submit(); // PENDING
+        journal.submit(journal.getTags()); // PENDING
 
         putJson(user, journal.getId(), "{}")
                 .andExpect(status().isBadRequest())
