@@ -61,6 +61,14 @@ public class ReviewService {
         return ReviewResultResponse.of(journal);
     }
 
+    /** 14. 돌려보내기. 사유 저장 → 작성자가 내 기록에서 보고 고쳐서 다시 요청 */
+    @Transactional
+    public ReviewResultResponse reject(User admin, Long journalId, String reason) {
+        Journal journal = findForDecision(admin, journalId);
+        journal.reject(reviewer(admin), reason);
+        return ReviewResultResponse.of(journal);
+    }
+
     /** 404 → 본인 일지 403(운영진 1명이면 허용) → PENDING 아니면 400(엔티티) */
     private Journal findForDecision(User admin, Long journalId) {
         Journal journal = findReviewable(admin, journalId);

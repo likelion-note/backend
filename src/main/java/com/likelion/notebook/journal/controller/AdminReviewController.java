@@ -5,12 +5,14 @@ import com.likelion.notebook.global.auth.CurrentUser;
 import com.likelion.notebook.global.common.ApiResponse;
 import com.likelion.notebook.journal.dto.ReviewDetailResponse;
 import com.likelion.notebook.journal.dto.ReviewListResponse;
+import com.likelion.notebook.journal.dto.ReviewRejectRequest;
 import com.likelion.notebook.journal.dto.ReviewResultResponse;
 import com.likelion.notebook.journal.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,5 +41,12 @@ public class AdminReviewController {
     @PostMapping("/{journalId}/approve")
     public ApiResponse<ReviewResultResponse> approve(@CurrentUser Long userId, @PathVariable Long journalId) {
         return ApiResponse.ok(reviewService.approve(adminChecker.require(userId), journalId));
+    }
+
+    /** 14. 돌려보내기 body {reason} */
+    @PostMapping("/{journalId}/reject")
+    public ApiResponse<ReviewResultResponse> reject(@CurrentUser Long userId, @PathVariable Long journalId,
+                                                    @RequestBody ReviewRejectRequest request) {
+        return ApiResponse.ok(reviewService.reject(adminChecker.require(userId), journalId, request.reason()));
     }
 }
