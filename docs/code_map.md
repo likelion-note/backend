@@ -269,6 +269,11 @@
 - `update` (3번 API): 보낸 body 전체로 덮어씀(안 보낸 칸은 null). DRAFT·REJECTED만. AI 정리본은 그대로
 - `summarize` (4번 API): `Journal.checkReadyForSummary`(상태 → 활동·시점·공개 범위 → 막힌 것 30자 → 넘긴 방법) → `AiClient` → `applySummary`. 보완 질문은 처음 정리할 때만(저장 안 함). `AiClientException`이면 INTERNAL_ERROR, 원문 유지. 태그는 중복 빼고 최대 3개
 - `submit` (5번 API): `Journal.submit(keptTags)` → 태그는 빼기만(새 태그면 400), PENDING으로, 돌려받은 사유 지움
+- `getMine` (6번 API): 내 일지 전부(프로젝트 fetch join, `updatedAt` 최신순) + 상태별 개수 + `noteImpact`
+- `getDetail` (7번 API): 원문 + 정리본(정리 전이면 summary null) + projectId. 남의 일지 403 "내 일지만 볼 수 있어요"
+- **파트 A 홈에서 부를 메서드**
+  - `journalBanner(userId)` → `{rejected, pending}` 내 일지 개수
+  - `noteImpact(userId)` → `{readCount, helpCount}` 내 공개(APPROVED) 노트의 `note_reaction` 합계 (행 = 읽음, `helped` = 도움돼요)
 - `findMine`: 없으면 NOT_FOUND "일지를 찾을 수 없어요", 남의 일지면 FORBIDDEN (문구는 API마다)
 
 ### journal/service/AuthorLabels
@@ -292,6 +297,8 @@
 | `PUT /api/journals/{id}` | SCR-JOUR-01 자동 저장 (입력 멈추고 3초 뒤) |
 | `POST /api/journals/{id}/summary` | SCR-JOUR-02 AI로 정리하기 |
 | `POST /api/journals/{id}/submit` body `{tags}` | SCR-JOUR-02 검토 요청 |
+| `GET /api/journals/me` | 내 기록 탭 (통계 + 목록) |
+| `GET /api/journals/{id}` | 내 기록 → 일지 열기 / 이어 쓰기 |
 
 ### global/exception/GlobalExceptionHandler (B가 추가)
 - `HttpMessageNotReadableException`(깨진 JSON, 값 목록에 없는 enum), `MethodArgumentTypeMismatchException`(경로 변수 타입) → 400 INVALID_INPUT. 전에는 500으로 나갔음
@@ -329,4 +336,6 @@
 | journal/JournalSummaryAiFailTest | AI 실패 시 500, 원문 유지 (AiClient를 MockitoBean으로) |
 | journal/ai/GeminiAiClientTest | 가짜 서버로 요청 헤더·응답 해석, 이상한 태그 버림, 빈 칸 유지, 보완 질문, 실패 3종 → AiClientException |
 | journal/ai/AiClientSelectionTest | 키가 있으면 GeminiAiClient 주입 |
+| journal/JournalMineTest | 상태별 개수·최근 수정 순·정리 전 title null·미분류 projectTitle null, 반응은 내 공개 노트만, journalBanner·noteImpact, 401 |
+| journal/JournalDetailTest | 원문·정리본·사유·projectId, 정리 전 summary null, 403/404, /me·/form이 상세로 안 잡힘 |
 | journal/JournalSubmitTest | 태그 빼기·전부 빼기, 새 태그 400, 정리본 없음 400, 중복 요청 400, 돌려받은 사유 지움, tags 없음 400, 403 |

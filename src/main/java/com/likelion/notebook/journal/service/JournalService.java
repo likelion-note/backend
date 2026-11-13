@@ -7,6 +7,7 @@ import com.likelion.notebook.guide.service.StageService;
 import com.likelion.notebook.journal.ai.AiClient;
 import com.likelion.notebook.journal.ai.AiClientException;
 import com.likelion.notebook.journal.dto.JournalBanner;
+import com.likelion.notebook.journal.dto.JournalDetailResponse;
 import com.likelion.notebook.journal.dto.JournalFormResponse;
 import com.likelion.notebook.journal.dto.MyJournalsResponse;
 import com.likelion.notebook.journal.dto.NoteImpact;
@@ -153,6 +154,12 @@ public class JournalService {
         return new MyJournalsResponse(
                 MyJournalsResponse.Stats.of(journals, noteImpact(userId)),
                 journals.stream().map(MyJournalsResponse.Item::of).toList());
+    }
+
+    /** 7. 내 일지 상세: 원문 + 정리본 (본인만) */
+    @Transactional(readOnly = true)
+    public JournalDetailResponse getDetail(Long userId, Long journalId) {
+        return JournalDetailResponse.of(findMine(userId, journalId, "내 일지만 볼 수 있어요"));
     }
 
     /** 홈(파트 A)·내 기록: 내 공개 노트의 읽음·도움돼요 합계 */
