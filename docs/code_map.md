@@ -2,7 +2,7 @@
 
 새 파일을 만들거나 로직이 바뀌면 이 문서도 같이 고치기. 경로는 `src/main/java/com/likelion/notebook/` 기준.
 
-마지막 갱신: 로그인 · 에러 코드 5개 · 배정 파트 분리 · 홈/가이드
+마지막 갱신: 로그인 · 에러 코드 5개 · 배정 파트 분리 · 홈/가이드 · 운영진(프로젝트·멤버·일정) · 회의
 
 ---
 
@@ -56,6 +56,11 @@
 - `@CurrentUser Long` 파라미터에 값을 채움
 - 순서: `Authorization: Bearer` → JwtProvider로 검증 → userId / (local만) `X-User-Id` 헤더 / 둘 다 없으면 UNAUTHORIZED
 - DB는 안 봄. "누구인지"만 알려주고 "운영진인지"는 서비스에서 따로 확인
+
+### global/auth/AdminChecker
+- 운영진 API 맨 앞에서 `User admin = adminChecker.require(userId)` 호출
+- 운영진이 아니면 FORBIDDEN. 반환된 운영진의 기수(cohort) 안에서만 작업 (다른 기수 데이터는 NOT_FOUND)
+- B의 검토 API도 이걸 쓰면 됨
 
 ### global/config/AuthArgumentConfig
 - 위 resolver를 Spring MVC에 등록
@@ -137,6 +142,26 @@
 | findUnassigned | 지금 배정이 없는 아기사자, 최근 가입순 (운영진 "배정 전" 그룹) |
 | countByCohortAndType | 운영진 수 → 2명 이상이면 본인 일지 검토 금지 |
 
+### user/service/ProjectService (FN-ADM-02)
+- `create`: 운영진 본인 기수에 생성. TEAM은 teamLetter를 A, B, C… 자동 부여 (기수 안 TEAM 개수 기준), OPS는 null
+- `list`: 기수의 분류 + 지금 멤버 수
+
+### user/service/MemberService (FN-ADM-03)
+- `members`: 배정 전(최근 가입순) / 팀별 → 파트별(PM, DESIGN, FRONTEND, BACKEND) / 운영 분류별
+- `assign`: 같은 기수만. 팀에 OPS 파트 불가. 나머지 규칙은 AssignmentService
+- `changeDefaultPart`: 아기사자에게 OPS 불가
+- `unassign`: 배정 해제
+
+### user/controller/AdminMemberController
+| API | 화면 |
+|---|---|
+| `GET /api/admin/projects` | SCR-ADM-04, 05 |
+| `POST /api/admin/projects` body `{title, kind}` | SCR-ADM-06 |
+| `GET /api/admin/members` | SCR-ADM-04 |
+| `PUT /api/admin/members/{id}/assignment` body `{projectId, part?}` | SCR-ADM-05 |
+| `DELETE /api/admin/members/{id}/assignment` | 배정 해제 |
+| `PUT /api/admin/members/{id}/default-part` body `{part}` | SCR-ADM-05 |
+
 ### user/controller/MeController
 - `GET /api/me`: 내 정보 + 기본 파트 + 지금 배정. 배정 전이면 `part`, `project`가 null
 
@@ -177,8 +202,58 @@
 | `GET /api/guide?part=&stage=` | SCR-GUIDE-01, 02 |
 | `PUT /api/guide/checks/{itemKey}` body `{checked}` | 홈·가이드 체크박스 |
 
+### guide/service/EventService (FN-ADM-04)
+- `list`: 기수 일정 날짜순
+- `create`: PROJECT_START는 기수마다 하나 (중복이면 INVALID_INPUT). 저장 즉시 모든 홈에 반영(홈이 매번 계산)
+
+### guide/controller/AdminEventController
+| API | 화면 |
+|---|---|
+| `GET /api/admin/events` | SCR-ADM-07 |
+| `POST /api/admin/events` body `{name, type, eventDate}` | SCR-ADM-07 |
+
 ### guide/LocalEventSeeder
 - local에서만 demo-data.json 일정 5개 등록 (시작 10/19, 세션 10/29, 중간발표 11/08, 해커톤 11/21, 데모데이 12/05)
+
+---
+
+## meeting/ (회의 도우미 · 회의 정리)
+
+### meeting/seed/MeetingSeed
+- `seed/meeting-helper.json`을 시작 시 메모리로 로드 (DB에 안 넣음)
+- 회의 종류 4개(FIRST, IDEA, CHECK, RETRO)마다 오늘 정할 질문 3개 + 막힐 때 팁
+- 팁의 `tags`(상황 태그 enum)로 관련 노트를 찾음 → 프론트가 노트 게시판 API를 tag로 조회 (B 담당)
+
+### meeting/service/MeetingService
+- `create`: 빈 줄은 버림. 정한 것과 할 일이 둘 다 비면 INVALID_INPUT. 날짜 생략 시 오늘
+- `list(userId, days)`: days 없으면 전체, 있으면 오늘 포함 최근 N일. 최신순
+- `get`, `delete`: 본인 것만. 남의 회의는 NOT_FOUND (존재 자체를 숨김)
+- **B의 성장일지 "회의 불러오기"는 `meetingService.list(userId, 7)`을 쓰기**
+
+### meeting/dto/MeetingResponse
+- `shareText`: 공유하기 버튼이 그대로 복사할 원문 (FN-MEET-04). 서버가 고정 형식으로 만듦
+  ```
+  아이디어 회의 · 10/27
+
+  정한 것
+  - 주제는 동아리 일정 관리로
+
+  누가 언제까지
+  - 민수 · 경쟁 서비스 조사 (수)
+  ```
+- 할 일의 `due`는 요일 한 글자("월"~"일") 같은 짧은 문자열 (날짜 아님)
+
+### meeting/dto/MeetingLabels
+- 회의 종류 한글 이름 (첫 회의, 아이디어 회의, 중간 점검 회의, 회고 회의)
+
+### meeting/controller/MeetingController
+| API | 화면 |
+|---|---|
+| `GET /api/meetings/templates` | SCR-MEET-01, 02 |
+| `POST /api/meetings` | SCR-MEET-03 → 응답의 shareText로 SCR-MEET-04 |
+| `GET /api/meetings?days=7` | SCR-MEET-05 (days 없이), SCR-JOUR-01 회의 불러오기 (days=7) |
+| `GET /api/meetings/{id}` | SCR-MEET-05 펼치기 |
+| `DELETE /api/meetings/{id}` | 잘못 저장한 회의 삭제 |
 
 ---
 
@@ -225,6 +300,8 @@
 | 파일 | 확인하는 것 |
 |---|---|
 | auth/AuthFlowTest | 가짜 구글 토큰 → NEED_SIGNUP → 틀린 코드 400 → 가입 → JWT로 /api/me → 재로그인 REGISTERED → 토큰 없이 401 |
+| admin/AdminFlowTest | 운영진 가입 → 프로젝트(팀 글자 A·B, 운영 null) → 아기사자 가입 → 기본 파트 → 배정 → 아기사자 홈에 PM 할 일. 아기사자의 운영진 API 403. 일정 등록, PROJECT_START 중복 400 |
+| meeting/MeetingTest | 템플릿 4종, 빈 줄 제거·공유 원문, 최근 7일 필터, 남의 회의 404, 삭제, 둘 다 비면 400 |
 | guide/HomeGuideTest | 2주차·D-12·W1_2 계산, 할 일 체크/해제 반영, 배정 전 빈 할 일, 운영진 403, 다른 파트·주차 가이드 |
 | user/AssignmentServiceTest | 기본 파트 복사, 재배정 이력, 배정 해제, 파트 없음 에러, 운영 분류는 OPS |
 | journal/JournalFormTest | 지금 배정이 기본값·지난 배정도 목록에, 배정 전 미분류+기본 파트, 일정 없는 기수 시점 null, 401 |

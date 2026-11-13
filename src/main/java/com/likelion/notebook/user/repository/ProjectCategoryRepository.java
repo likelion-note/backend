@@ -8,4 +8,7 @@ import java.util.List;
 public interface ProjectCategoryRepository extends JpaRepository<ProjectCategory, Long> {
 
     List<ProjectCategory> findByCohortOrderByIdAsc(Integer cohort);
+
+    /** 팀 글자(A, B, C…) 자동 부여용 */
+    long countByCohortAndKind(Integer cohort, ProjectCategory.ProjectKind kind);
 }
