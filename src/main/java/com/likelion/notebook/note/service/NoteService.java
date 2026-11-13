@@ -3,6 +3,9 @@ package com.likelion.notebook.note.service;
 import com.likelion.notebook.global.common.ErrorCode;
 import com.likelion.notebook.global.exception.BusinessException;
 import com.likelion.notebook.journal.entity.Journal;
+import com.likelion.notebook.journal.entity.JournalBody;
+import com.likelion.notebook.note.dto.NoteDetailResponse;
+import com.likelion.notebook.note.entity.NoteReaction;
 import com.likelion.notebook.journal.repository.JournalRepository;
 import com.likelion.notebook.journal.service.AuthorLabels;
 import com.likelion.notebook.note.dto.NoteCard;
@@ -38,6 +41,8 @@ public class NoteService {
     private final JournalRepository journalRepository;
     private final NoteReactionRepository reactionRepository;
 
+    private static final int SIMILAR_LIMIT = 2;
+
     /** 8. 노트 목록·검색 */
     @Transactional(readOnly = true)
     public NoteListResponse list(Long userId, NoteFilter filter) {
@@ -64,6 +69,70 @@ public class NoteService {
         return new NoteListResponse(
                 cards(pageItems, viewer, counts),
                 filter.page(), filter.size(), sorted.size(), to < sorted.size());
+    }
+
+    /** 9. 노트 상세. 처음 열면 읽음 기록(1인 1회, 작성자 본인 제외). 볼 수 없으면 404 */
+    @Transactional
+    public NoteDetailResponse detail(Long userId, Long journalId) {
+        User viewer = findViewer(userId);
+        Journal note = findVisible(journalId, viewer);
+
+        if (!note.isWrittenBy(viewer.getId())
+                && !reactionRepository.existsByUserIdAndJournalId(viewer.getId(), note.getId())) {
+            reactionRepository.save(new NoteReaction(viewer, note));
+        }
+        boolean helped = reactionRepository.findByUserIdAndJournalId(viewer.getId(), note.getId())
+                .map(NoteReaction::isHelped).orElse(false);
+
+        JournalBody body = note.getSummary();
+        return new NoteDetailResponse(
+                note.getId(), note.getSummaryTitle(), label(note, viewer),
+                isCurrentCohort(note, viewer), note.isWrittenBy(viewer.getId()),
+                note.getActivity(), note.getTiming(), note.getTags(),
+                new NoteDetailResponse.Body(body.getStuck(), body.getSolved(), body.getAgain(), body.getMemo()),
+                reactionRepository.countByJournalId(note.getId()),
+                reactionRepository.countByJournalIdAndHelpedTrue(note.getId()),
+                helped,
+                similarNotes(note, viewer));
+    }
+
+    /**
+     * 비슷한 노트 최대 2개: 볼 수 있는 노트 중 자기 자신 빼고, 태그 겹침·같은 파트·같은 시점이 있는 것.
+     * 점수 = 겹치는 태그 수 × 2 + 파트 같음 1 + 시점 같음 1. 같으면 도움돼요 많은 순 → 최신
+     */
+    private List<NoteCard> similarNotes(Journal note, User viewer) {
+        List<Journal> candidates = journalRepository.findVisibleNotes(viewer.getId(), viewer.getCohort()).stream()
+                .filter(j -> !j.getId().equals(note.getId()))
+                .filter(j -> similarity(note, j) > 0)
+                .toList();
+        if (candidates.isEmpty()) {
+            return List.of();
+        }
+        Map<Long, Counts> counts = counts(ids(candidates));
+        List<Journal> top = candidates.stream()
+                .sorted(Comparator.comparingInt((Journal j) -> similarity(note, j)).reversed()
+                        .thenComparing(order(NoteSort.HELPS, counts)))
+                .limit(SIMILAR_LIMIT)
+                .toList();
+        return cards(top, viewer, counts);
+    }
+
+    static int similarity(Journal base, Journal other) {
+        int sharedTags = (int) other.getTags().stream().filter(base.getTags()::contains).count();
+        int score = sharedTags * 2;
+        if (base.getPart() != null && base.getPart() == other.getPart()) {
+            score++;
+        }
+        if (base.getTiming() != null && base.getTiming() == other.getTiming()) {
+            score++;
+        }
+        return score;
+    }
+
+    /** 볼 수 없거나 없거나 공개 전이면 전부 같은 404 (있다는 것도 알리지 않음) */
+    Journal findVisible(Long journalId, User viewer) {
+        return journalRepository.findVisibleNote(journalId, viewer.getId(), viewer.getCohort())
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND, "노트를 찾을 수 없어요"));
     }
 
     User findViewer(Long userId) {
