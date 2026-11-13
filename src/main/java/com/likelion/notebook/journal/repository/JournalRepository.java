@@ -5,6 +5,7 @@ import com.likelion.notebook.journal.entity.JournalEnums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,13 +43,14 @@ public interface JournalRepository extends JpaRepository<Journal, Long> {
     /** 홈 배너: 상태별 내 일지 개수 */
     long countByAuthorIdAndStatus(Long authorId, Status status);
 
-    /** 운영진 검토 대기열: 오래된 순(updatedAt), 본인 일지 제외 */
-    @Query("select j from Journal j where j.status = :status and j.author.id <> :reviewerId order by j.updatedAt asc")
-    List<Journal> findByStatusExcludingAuthor(Status status, Long reviewerId);
+    /** 11. 검토 대기열: 같은 기수의 PENDING, 오래된 순(updatedAt). 본인 일지 제외는 ReviewService (운영진 1명 예외) */
+    @Query("select j from Journal j join fetch j.author a where j.status = :status and a.cohort = :cohort "
+            + "order by j.updatedAt asc, j.id asc")
+    List<Journal> findForReview(Status status, Integer cohort);
 
-    default List<Journal> findPendingForReviewer(Long reviewerId) {
-        return findByStatusExcludingAuthor(Status.PENDING, reviewerId);
-    }
+    /** 11. 최근 처리한 것: 같은 기수, 승인·돌려보냄, 처리 시각 최신순 10개 (운영진 전체가 처리한 것) */
+    List<Journal> findTop10ByAuthorCohortAndStatusInAndReviewedAtIsNotNullOrderByReviewedAtDesc(
+            Integer cohort, Collection<Status> statuses);
 
     /** 포트폴리오: 프로젝트별 내 일지 (임시 저장 제외) */
     List<Journal> findByAuthorIdAndProjectIdAndStatusNotOrderByCreatedAtAsc(Long authorId, Long projectId, Status status);
