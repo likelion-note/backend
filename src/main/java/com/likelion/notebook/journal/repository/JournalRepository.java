@@ -9,8 +9,12 @@ import java.util.List;
 
 public interface JournalRepository extends JpaRepository<Journal, Long> {
 
-    /** 내 기록 탭 */
-    List<Journal> findByAuthorIdOrderByCreatedAtDesc(Long authorId);
+    /** 6. 내 기록 탭: 내 일지 전부 + 프로젝트(한 번에), 최근 수정 순 */
+    @Query("select j from Journal j left join fetch j.project where j.author.id = :authorId order by j.updatedAt desc, j.id desc")
+    List<Journal> findMineWithProject(Long authorId);
+
+    /** 홈 배너: 상태별 내 일지 개수 */
+    long countByAuthorIdAndStatus(Long authorId, Status status);
 
     /** 운영진 검토 대기열: 오래된 순(updatedAt), 본인 일지 제외 */
     @Query("select j from Journal j where j.status = :status and j.author.id <> :reviewerId order by j.updatedAt asc")

@@ -6,7 +6,13 @@ import com.likelion.notebook.guide.repository.EventRepository;
 import com.likelion.notebook.guide.service.StageService;
 import com.likelion.notebook.journal.ai.AiClient;
 import com.likelion.notebook.journal.ai.AiClientException;
+import com.likelion.notebook.journal.dto.JournalBanner;
+import com.likelion.notebook.journal.dto.JournalDetailResponse;
 import com.likelion.notebook.journal.dto.JournalFormResponse;
+import com.likelion.notebook.journal.dto.MyJournalsResponse;
+import com.likelion.notebook.journal.dto.NoteImpact;
+import com.likelion.notebook.journal.entity.JournalEnums.Status;
+import com.likelion.notebook.note.repository.NoteReactionRepository;
 import com.likelion.notebook.journal.dto.JournalSubmitRequest;
 import com.likelion.notebook.journal.dto.JournalSummaryResponse;
 import com.likelion.notebook.journal.entity.JournalEnums.Tag;
@@ -42,6 +48,7 @@ public class JournalService {
     private final StageService stageService;
     private final JournalRepository journalRepository;
     private final AiClient aiClient;
+    private final NoteReactionRepository reactionRepository;
 
     private static final int MAX_TAGS = 3;
 
@@ -138,6 +145,37 @@ public class JournalService {
         journal.submit(request.tags().stream().filter(Objects::nonNull).distinct().toList());
         journalRepository.flush(); // updatedAt(검토 대기열 정렬 기준)을 응답에 담으려고 바로 반영
         return JournalSaveResponse.of(journal);
+    }
+
+    /** 6. 내 기록: 통계 + 내 일지 전부 (최근 수정 순, 페이징 없음) */
+    @Transactional(readOnly = true)
+    public MyJournalsResponse getMine(Long userId) {
+        List<Journal> journals = journalRepository.findMineWithProject(userId);
+        return new MyJournalsResponse(
+                MyJournalsResponse.Stats.of(journals, noteImpact(userId)),
+                journals.stream().map(MyJournalsResponse.Item::of).toList());
+    }
+
+    /** 7. 내 일지 상세: 원문 + 정리본 (본인만) */
+    @Transactional(readOnly = true)
+    public JournalDetailResponse getDetail(Long userId, Long journalId) {
+        return JournalDetailResponse.of(findMine(userId, journalId, "내 일지만 볼 수 있어요"));
+    }
+
+    /** 홈(파트 A)·내 기록: 내 공개 노트의 읽음·도움돼요 합계 */
+    @Transactional(readOnly = true)
+    public NoteImpact noteImpact(Long userId) {
+        return new NoteImpact(
+                reactionRepository.countReadsOnAuthorJournals(userId, Status.APPROVED),
+                reactionRepository.countHelpsOnAuthorJournals(userId, Status.APPROVED));
+    }
+
+    /** 홈(파트 A): 돌려받은·검토 중 내 일지 개수 */
+    @Transactional(readOnly = true)
+    public JournalBanner journalBanner(Long userId) {
+        return new JournalBanner(
+                journalRepository.countByAuthorIdAndStatus(userId, Status.REJECTED),
+                journalRepository.countByAuthorIdAndStatus(userId, Status.PENDING));
     }
 
     /** 내 일지 찾기. 없으면 404, 남의 일지면 403 (문구는 API마다 다름) */
