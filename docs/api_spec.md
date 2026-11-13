@@ -246,7 +246,7 @@ AI 정리 때 일지 내용을 보고 붙이는 "어떤 상황이었나" 라벨.
 | 404 | NOT_FOUND | 일지를 찾을 수 없어요 | |
 | 500 | INTERNAL_ERROR | 정리에 실패했어요. 잠시 후 다시 시도해 주세요 | AI 호출 실패 |
 
-**AI 연동**: 서버는 `AiClient` 인터페이스로만 부름. 지금은 `FakeAiClient`(고정 응답), 실제 구현은 Gemini 예정(키는 `AI_API_KEY` 환경변수). 응답 형식은 같음
+**AI 연동**: 서버는 `AiClient` 인터페이스로만 부름. `AI_API_KEY` 환경변수가 있으면 Gemini, 없으면 `FakeAiClient`(고정 응답, 이름 가리기 안 함). 응답 형식은 같음
 
 ---
 

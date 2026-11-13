@@ -277,9 +277,12 @@
 - 팀 가명은 지금 `ProjectCategory.teamLetter`("B" → "B팀"). ERD 이름은 anon_label
 
 ### journal/ai/AiClient
-- AI 호출은 이 인터페이스로만. 지금 구현은 `FakeAiClient`(고정 제목·태그·보완 질문, 정리본 = 원문 그대로, 이름 안 가림)
-- 실제 구현은 Gemini 예정, 키는 `AI_API_KEY`. 추가하면 키 있을 때만 쓰이게 조건 붙이기
-- 실패는 `AiClientException`
+- AI 호출은 이 인터페이스로만. 실패는 `AiClientException`
+- 구현 선택: `app.ai.api-key`(`AI_API_KEY`)가 있으면 `GeminiAiClient`, 비어 있으면 `FakeAiClient`
+- `GeminiAiClient`: `generateContent`를 JSON 응답 모드(`responseSchema`)로 호출. 모델은 `app.ai.model`(`AI_MODEL`, 기본 gemini-2.5-flash-lite). 연결 5초·응답 30초 제한. 목록에 없는 태그는 버림(최대 3개), 원문이 빈 칸(again·memo)은 정리본도 비움, 원문은 로그에 안 남김
+- `GeminiPrompts`: 지시문 (이름 → `⟦팀원⟧`, 내용 지어내지 않기, 제목 한 줄, 태그 1~3개, 보완 질문은 처음만)
+- `FakeAiClient`: 고정 제목·태그·보완 질문, 정리본 = 원문 그대로(이름 안 가림)
+- 테스트는 `build.gradle`에서 `AI_API_KEY`를 비워서 항상 Fake (PC에 키가 있어도 실제 호출 안 함)
 
 ### journal/controller/JournalController
 | API | 화면 |
@@ -324,4 +327,6 @@
 | journal/FakeAiClientTest | 키 없으면 FakeAiClient 주입, 고정 응답, 보완 질문은 처음만 |
 | journal/JournalSummaryTest | 정리·미리보기, 보완 질문 처음만, 팀 가명·미분류, 운영진·파트 없음 표시, 필수 조건 3종 400, PENDING 400, 403/404 |
 | journal/JournalSummaryAiFailTest | AI 실패 시 500, 원문 유지 (AiClient를 MockitoBean으로) |
+| journal/ai/GeminiAiClientTest | 가짜 서버로 요청 헤더·응답 해석, 이상한 태그 버림, 빈 칸 유지, 보완 질문, 실패 3종 → AiClientException |
+| journal/ai/AiClientSelectionTest | 키가 있으면 GeminiAiClient 주입 |
 | journal/JournalSubmitTest | 태그 빼기·전부 빼기, 새 태그 400, 정리본 없음 400, 중복 요청 400, 돌려받은 사유 지움, tags 없음 400, 403 |

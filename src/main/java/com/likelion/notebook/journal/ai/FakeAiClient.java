@@ -2,17 +2,19 @@ package com.likelion.notebook.journal.ai;
 
 import com.likelion.notebook.journal.entity.JournalBody;
 import com.likelion.notebook.journal.entity.JournalEnums.Tag;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 /**
- * 키 없이 쓰는 가짜 AI. 항상 같은 모양의 고정 응답.
+ * 키 없이 쓰는 가짜 AI. app.ai.api-key(AI_API_KEY)가 비어 있을 때만 쓰임 (있으면 GeminiAiClient).
  * - 제목·태그·보완 질문은 고정값
- * - 정리본은 원문을 그대로 돌려줌 (이름 가리기 안 함)
- * 실제 구현(Gemini)을 추가하면 AI_API_KEY가 없을 때만 이게 쓰이도록 조건을 붙이기
+ * - 정리본은 원문을 그대로 돌려줌 (이름 가리기 안 함) → 실제 사용자 데이터에는 쓰지 않기
+ * 테스트는 build.gradle에서 AI_API_KEY를 비워서 항상 이걸 씀
  */
 @Component
+@ConditionalOnExpression("'${app.ai.api-key:}'.isBlank()")
 public class FakeAiClient implements AiClient {
 
     public static final String TITLE = "[예시] 막혔던 순간과 넘긴 방법";

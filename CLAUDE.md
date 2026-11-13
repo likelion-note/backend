@@ -115,7 +115,7 @@ A(언니)는 배포(AWS EC2)·CI/CD도 담당. 기능 폴더 안은 `controller 
 - 명세의 "분류가 회의인 노트"는 태그 `MEETING_RUN`으로 대신 (`GET /api/notes?tag=MEETING_RUN&size=2`)
 - 시점(timing) 계산은 A 홈과 같은 함수 하나를 같이 씀: `StageService.current(cohort).timing()`. 다음 큰 행사까지 14일 이상 `W2PLUS`, 7~13일 `W1_2`, 0~6일 `DURING`, 남은 행사 없으면 `AFTER`
 - 회의 불러오기: 프론트가 A의 `GET /api/meetings?days=7`을 호출. B는 API 추가 없음
-- AI: `AiClient` 인터페이스로만 부르기. 지금은 `FakeAiClient`(고정 응답), 실제 구현은 Gemini 예정. 키는 `AI_API_KEY` 환경변수
+- AI: `AiClient` 인터페이스로만 부르기. `AI_API_KEY`(yml `app.ai.api-key`)가 있으면 Gemini(`GeminiAiClient`, 모델 `AI_MODEL`), 비어 있으면 `FakeAiClient`(고정 응답, 이름 안 가림). 테스트는 항상 Fake
 - 홈(`/api/home`, A)에 B 필드 2개: `journalBanner`(돌려받음·검토 중 개수), `noteImpact`(내 공개 노트 읽음·도움돼요 합계). A의 `HomeService`가 B 서비스 메서드를 호출 → B는 메서드만 준비
 
 ## 익명성 규칙 (가장 중요)
