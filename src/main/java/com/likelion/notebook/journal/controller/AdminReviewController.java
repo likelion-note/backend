@@ -5,10 +5,12 @@ import com.likelion.notebook.global.auth.CurrentUser;
 import com.likelion.notebook.global.common.ApiResponse;
 import com.likelion.notebook.journal.dto.ReviewDetailResponse;
 import com.likelion.notebook.journal.dto.ReviewListResponse;
+import com.likelion.notebook.journal.dto.ReviewResultResponse;
 import com.likelion.notebook.journal.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,5 +33,11 @@ public class AdminReviewController {
     @GetMapping("/{journalId}")
     public ApiResponse<ReviewDetailResponse> detail(@CurrentUser Long userId, @PathVariable Long journalId) {
         return ApiResponse.ok(reviewService.detail(adminChecker.require(userId), journalId));
+    }
+
+    /** 13. 승인 (Body 없음) */
+    @PostMapping("/{journalId}/approve")
+    public ApiResponse<ReviewResultResponse> approve(@CurrentUser Long userId, @PathVariable Long journalId) {
+        return ApiResponse.ok(reviewService.approve(adminChecker.require(userId), journalId));
     }
 }

@@ -4,6 +4,7 @@ import com.likelion.notebook.global.common.ErrorCode;
 import com.likelion.notebook.global.exception.BusinessException;
 import com.likelion.notebook.journal.dto.ReviewDetailResponse;
 import com.likelion.notebook.journal.dto.ReviewListResponse;
+import com.likelion.notebook.journal.dto.ReviewResultResponse;
 import com.likelion.notebook.journal.entity.Journal;
 import com.likelion.notebook.journal.entity.JournalEnums.Status;
 import com.likelion.notebook.journal.repository.JournalRepository;
@@ -50,6 +51,28 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public ReviewDetailResponse detail(User admin, Long journalId) {
         return ReviewDetailResponse.of(findReviewable(admin, journalId));
+    }
+
+    /** 13. 승인 → 노트로 공개. 검토자·처리 시각 기록 */
+    @Transactional
+    public ReviewResultResponse approve(User admin, Long journalId) {
+        Journal journal = findForDecision(admin, journalId);
+        journal.approve(reviewer(admin));
+        return ReviewResultResponse.of(journal);
+    }
+
+    /** 404 → 본인 일지 403(운영진 1명이면 허용) → PENDING 아니면 400(엔티티) */
+    private Journal findForDecision(User admin, Long journalId) {
+        Journal journal = findReviewable(admin, journalId);
+        if (journal.isWrittenBy(admin.getId()) && !isOnlyAdmin(admin)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN, "내 일지는 검토할 수 없어요");
+        }
+        return journal;
+    }
+
+    /** AdminChecker가 준 User는 다른 트랜잭션에서 읽은 것이라 이 트랜잭션의 영속 객체로 다시 연결 */
+    private User reviewer(User admin) {
+        return userRepository.getReferenceById(admin.getId());
     }
 
     /** 없음·임시 저장·다른 기수는 전부 404 "일지를 찾을 수 없어요" */
