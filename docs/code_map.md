@@ -257,6 +257,30 @@
 
 ---
 
+## journal/ (B)
+
+### journal/service/JournalService
+- `getForm` (1번 API): 작성 화면 기본값
+  - projects = 배정된 적 있는 프로젝트 전부(지난 배정·운영 분류 포함). 지금 배정이 맨 앞, 나머지는 최근 배정 순
+  - defaultProjectId·defaultPart = 지금 배정. 없으면 null / 기본 파트(users.part)
+  - defaultTiming = `stageService.current(cohort).timing()`. 그 기수 일정이 아예 없으면 null
+  - A의 `ProjectAssignmentRepository`는 수정하지 않고 기존 메서드(`findProjectIdsByUserId` + `findByUserIdAndProjectId`) 조합
+- `create` (2번 API): DRAFT 일지 생성. projectId는 배정된 적 있는 프로젝트만(아니면 INVALID_INPUT), null = 미분류
+- `update` (3번 API): 보낸 body 전체로 덮어씀(안 보낸 칸은 null). DRAFT·REJECTED만. AI 정리본은 그대로
+- `findMine`: 없으면 NOT_FOUND "일지를 찾을 수 없어요", 남의 일지면 FORBIDDEN (문구는 API마다)
+
+### journal/controller/JournalController
+| API | 화면 |
+|---|---|
+| `GET /api/journals/form` | SCR-JOUR-01 성장일지 쓰기 (기본값) |
+| `POST /api/journals` | SCR-JOUR-01 첫 입력 (임시 저장, id 발급) |
+| `PUT /api/journals/{id}` | SCR-JOUR-01 자동 저장 (입력 멈추고 3초 뒤) |
+
+### global/exception/GlobalExceptionHandler (B가 추가)
+- `HttpMessageNotReadableException`(깨진 JSON, 값 목록에 없는 enum), `MethodArgumentTypeMismatchException`(경로 변수 타입) → 400 INVALID_INPUT. 전에는 500으로 나갔음
+
+---
+
 ## 설정
 
 ### application.yml
@@ -280,3 +304,6 @@
 | meeting/MeetingTest | 템플릿 4종, 빈 줄 제거·공유 원문, 최근 7일 필터, 남의 회의 404, 삭제, 둘 다 비면 400 |
 | guide/HomeGuideTest | 2주차·D-12·W1_2 계산, 할 일 체크/해제 반영, 배정 전 빈 할 일, 운영진 403, 다른 파트·주차 가이드 |
 | user/AssignmentServiceTest | 기본 파트 복사, 재배정 이력, 배정 해제, 파트 없음 에러, 운영 분류는 OPS |
+| journal/JournalFormTest | 지금 배정이 기본값·지난 배정도 목록에, 배정 전 미분류+기본 파트, 일정 없는 기수 시점 null, 401 |
+| journal/JournalWriteTest | 일지 생성, 빈 body 미분류, 남의 프로젝트 400, 잘못된 enum 400, 2000자 초과 400, 401 |
+| journal/JournalAutoSaveTest | 전체 덮어쓰기, AI 정리본 유지, PENDING 수정 400, 남의 일지 403, 없는 일지 404, id 타입 400 |
