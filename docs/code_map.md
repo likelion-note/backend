@@ -285,8 +285,9 @@
 - AI 호출은 이 인터페이스로만. 실패는 `AiClientException`
 - 구현 선택: `app.ai.api-key`(`AI_API_KEY`)가 있으면 `GeminiAiClient`, 비어 있으면 `FakeAiClient`
 - `GeminiAiClient`: `generateContent`를 JSON 응답 모드(`responseSchema`)로 호출. 모델은 `app.ai.model`(`AI_MODEL`, 기본 gemini-3.5-flash-lite). 연결 5초·응답 30초 제한. 목록에 없는 태그는 버림(최대 3개), 원문이 빈 칸(again·memo)은 정리본도 비움, 원문은 로그에 안 남김
-- `GeminiPrompts`: 지시문 (이름 → `⟦팀원⟧`, 내용 지어내지 않기, 제목 한 줄, 태그 1~3개, 보완 질문은 처음만)
-- `FakeAiClient`: 고정 제목·태그·보완 질문, 정리본 = 원문 그대로(이름 안 가림)
+- 메서드 2개: `summarizeJournal`(4번 AI 정리), `summarizePortfolio`(16번 포트폴리오 요약, 응답 `{result}`)
+- `GeminiPrompts`: 지시문 (이름 → `⟦팀원⟧`, 내용 지어내지 않기, 제목 한 줄, 태그 1~3개, 보완 질문은 처음만). 포트폴리오는 형식별(3줄 개조식 / 4~6문장 단락), 없는 숫자·성과는 `⟪숫자⟫`·`⟪결과⟫` 빈칸
+- `FakeAiClient`: 고정 제목·태그·보완 질문·포트폴리오 문장(⟪⟫ 빈칸 포함), 정리본 = 원문 그대로(이름 안 가림)
 - 테스트는 `build.gradle`에서 `AI_API_KEY`를 비워서 항상 Fake (PC에 키가 있어도 실제 호출 안 함)
 
 ### journal/controller/JournalController
@@ -353,6 +354,20 @@
 - `approve`·`reject`: 404 → 본인 일지 403 "내 일지는 검토할 수 없어요"(운영진 1명이면 허용) → `Journal.approve/reject`(PENDING 아니면 400, 사유 1~200자). 검토자·처리 시각 기록
 - 운영진 1명 판단: `userRepository.countByCohortAndType(cohort, ADMIN) <= 1`
 
+## 포트폴리오 (B, journal/)
+
+### journal/controller/PortfolioController
+| API | 화면 |
+|---|---|
+| `GET /api/portfolio/projects` | 내 기록 → 포트폴리오 칸 (프로젝트별 일지 수, 남은 횟수) |
+| `POST /api/portfolio/summaries` body `{projectId, format}` | 요약 만들기 |
+
+### journal/service/PortfolioService
+- 근거 = 그 프로젝트의 내 일지(임시 저장 제외, 검토 상태 무관) **원문**. 미분류 일지는 포트폴리오에서 빠짐
+- `projects`: `JournalRepository.countPortfolioProjects`로 프로젝트별 개수·최근 수정 시각을 한 번에. 2개 이상이면 `available`
+- `create`: 입력(빈 값·없는 format 400) → 내 일지 0개면 400 "입력값을 확인해 주세요"(내 프로젝트 아님) · 1개면 "일지가 2개 이상 있어야 해요" → 하루 5회 → AI → 저장. AI가 실패하면 저장 전에 끝나서 횟수 차감 없음 (500)
+- 하루 5회: `portfolio_summary`를 `createdAt >= 오늘 0시`로 셈. 오늘 = `LocalDate.now(clock)`의 KST 0시를 JVM 기본 시간대로 바꿔 비교 (created_at은 JPA Auditing이 JVM 시간대로 적기 때문). local은 날짜가 과거(10-27)로 고정돼서 "서버 켠 뒤 5회"처럼 동작
+
 ---
 
 ## 설정
@@ -384,7 +399,7 @@
 | journal/FakeAiClientTest | 키 없으면 FakeAiClient 주입, 고정 응답, 보완 질문은 처음만 |
 | journal/JournalSummaryTest | 정리·미리보기, 보완 질문 처음만, 팀 가명·미분류, 운영진·파트 없음 표시, 필수 조건 3종 400, PENDING 400, 403/404 |
 | journal/JournalSummaryAiFailTest | AI 실패 시 500, 원문 유지 (AiClient를 MockitoBean으로) |
-| journal/ai/GeminiAiClientTest | 가짜 서버로 요청 헤더·응답 해석, 이상한 태그 버림, 빈 칸 유지, 보완 질문, 실패 3종 → AiClientException |
+| journal/ai/GeminiAiClientTest | 가짜 서버로 요청 헤더·응답 해석, 이상한 태그 버림, 빈 칸 유지, 보완 질문, 실패 3종 → AiClientException. 포트폴리오: 원문·형식 지시가 요청에 들어감, result 꺼내기, 빈 값·실패 → AiClientException |
 | journal/ai/AiClientSelectionTest | 키가 있으면 GeminiAiClient 주입 |
 | journal/JournalMineTest | 상태별 개수·최근 수정 순·정리 전 title null·미분류 projectTitle null, 반응은 내 공개 노트만, journalBanner·noteImpact, 401 |
 | journal/JournalDetailTest | 원문·정리본·사유·projectId, 정리 전 summary null, 403/404, /me·/form이 상세로 안 잡힘 |
@@ -396,4 +411,7 @@
 | journal/ReviewDetailTest | 정리본만(원문·작성자 없음)·팀 없는 라벨, 처리된 일지 열람, 임시 저장·다른 기수 404, 아기사자 403 |
 | journal/ReviewApproveTest | 승인 → 검토자·시각 기록·노트 게시판에 보임, 이미 처리 400, 본인 403·운영진 1명이면 허용, 다른 기수 404 |
 | journal/ReviewRejectTest | 사유 저장(앞뒤 공백 제거)·작성자 내 일지에서 보임, 빈 값·201자 400·200자 OK, 이미 처리 400, 본인 403, 다른 기수 404 |
+| journal/PortfolioProjectsTest | 일지 쓴 프로젝트만(임시 저장만·미분류·남의 일지 제외)·최근 수정 순·available, 남은 횟수 0 아래로 안 감, 401 |
+| journal/PortfolioSummaryTest | 임시 저장 뺀 내 일지로 요약·저장(돌려받은 것 포함)·sourceJournalIds 작성 순, 일지 1개 400, 내 프로젝트 아님·빈 값·잘못된 format 400, 6번째 400, 401 |
+| journal/PortfolioSummaryAiFailTest | AI 실패 시 500, 저장 안 됨·남은 횟수 그대로 |
 | journal/JournalSubmitTest | 태그 빼기·전부 빼기, 새 태그 400, 정리본 없음 400, 중복 요청 400, 돌려받은 사유 지움, tags 없음 400, 403 |

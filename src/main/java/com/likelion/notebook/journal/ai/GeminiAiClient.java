@@ -86,6 +86,32 @@ public class GeminiAiClient implements AiClient {
         }
     }
 
+    @Override
+    public String summarizePortfolio(PortfolioInput input) {
+        Map<String, Object> schema = Map.of("type", "OBJECT",
+                "properties", Map.of("result", Map.of("type", "STRING")),
+                "required", List.of("result"));
+        Map<String, Object> request = Map.of(
+                "contents", List.of(Map.of("role", "user",
+                        "parts", List.of(Map.of("text", GeminiPrompts.portfolio(input))))),
+                "generationConfig", Map.of(
+                        "temperature", 0.4,
+                        "responseMimeType", "application/json",
+                        "responseSchema", schema));
+
+        String text = call(request);
+        String result;
+        try {
+            result = objectMapper.readValue(text, PortfolioOutput.class).result();
+        } catch (Exception e) {
+            throw new AiClientException("Gemini 응답 형식 오류", e);
+        }
+        if (result == null || result.isBlank()) {
+            throw new AiClientException("Gemini 응답에 요약 없음", null);
+        }
+        return result.strip();
+    }
+
     /** generateContent 호출 → 첫 후보의 텍스트(JSON 문자열) */
     private String call(Map<String, Object> request) {
         JsonNode response;
@@ -163,6 +189,10 @@ public class GeminiAiClient implements AiClient {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     record Output(String title, List<String> tags, OutputBody body, String followUpQuestion) {
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    record PortfolioOutput(String result) {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

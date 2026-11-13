@@ -3,7 +3,10 @@ package com.likelion.notebook.journal.ai;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.likelion.notebook.journal.ai.AiClient.JournalInput;
 import com.likelion.notebook.journal.ai.AiClient.JournalSummary;
+import com.likelion.notebook.journal.ai.AiClient.PortfolioEntry;
+import com.likelion.notebook.journal.ai.AiClient.PortfolioInput;
 import com.likelion.notebook.journal.entity.JournalBody;
+import com.likelion.notebook.journal.entity.JournalEnums.PortfolioFormat;
 import com.likelion.notebook.journal.entity.JournalEnums.Tag;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +16,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
@@ -81,6 +88,36 @@ class GeminiAiClientTest {
         server.reset();
         server.expect(requestTo(URL)).andRespond(withSuccess("{\"candidates\": []}", MediaType.APPLICATION_JSON));
         assertThatThrownBy(() -> client.summarizeJournal(input(true))).isInstanceOf(AiClientException.class);
+    }
+
+    @Test
+    void 포트폴리오_요약은_result만_꺼내고_일지_원문을_보낸다() {
+        server.expect(requestTo(URL))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(header("x-goog-api-key", "test-key"))
+                .andExpect(content().string(containsString("표로 나눴어요")))
+                .andExpect(content().string(containsString("이력서에 넣을 3줄")))
+                .andRespond(withSuccess(wrap("{\"result\": \"  - 역할을 표로 나눠 ⟪숫자⟫일 안에 완성  \"}"),
+                        MediaType.APPLICATION_JSON));
+
+        assertThat(client.summarizePortfolio(portfolio())).isEqualTo("- 역할을 표로 나눠 ⟪숫자⟫일 안에 완성");
+        server.verify();
+    }
+
+    @Test
+    void 포트폴리오_요약이_비거나_실패하면_AiClientException() {
+        server.expect(requestTo(URL)).andRespond(withSuccess(wrap("{\"result\": \"  \"}"), MediaType.APPLICATION_JSON));
+        assertThatThrownBy(() -> client.summarizePortfolio(portfolio())).isInstanceOf(AiClientException.class);
+
+        server.reset();
+        server.expect(requestTo(URL)).andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
+        assertThatThrownBy(() -> client.summarizePortfolio(portfolio())).isInstanceOf(AiClientException.class);
+    }
+
+    private static PortfolioInput portfolio() {
+        return new PortfolioInput("14기 해커톤 · 멋사수첩팀", null, PortfolioFormat.RESUME_3LINES, List.of(
+                new PortfolioEntry(null, null, new JournalBody("역할이 안 정해졌어요", "표로 나눴어요", null, null)),
+                new PortfolioEntry(null, null, new JournalBody("배포가 막혔어요", "로그를 봤어요", "미리 연습", null))));
     }
 
     private static JournalInput input(boolean askFollowUp) {
