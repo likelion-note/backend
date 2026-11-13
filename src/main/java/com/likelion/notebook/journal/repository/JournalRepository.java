@@ -52,7 +52,16 @@ public interface JournalRepository extends JpaRepository<Journal, Long> {
     List<Journal> findTop10ByAuthorCohortAndStatusInAndReviewedAtIsNotNullOrderByReviewedAtDesc(
             Integer cohort, Collection<Status> statuses);
 
-    /** 포트폴리오: 프로젝트별 내 일지 (임시 저장 제외) */
+    /**
+     * 15. 포트폴리오 프로젝트 목록: 내 일지(임시 저장 제외)를 프로젝트별로 묶어 [project, 개수, 최근 수정 시각].
+     * 미분류(project null)는 inner join이라 빠짐. 최근 수정 순
+     */
+    @Query("select p, count(j), max(j.updatedAt) from Journal j join j.project p "
+            + "where j.author.id = :authorId and j.status <> com.likelion.notebook.journal.entity.JournalEnums.Status.DRAFT "
+            + "group by p order by max(j.updatedAt) desc, p.id desc")
+    List<Object[]> countPortfolioProjects(Long authorId);
+
+    /** 16. 포트폴리오 근거: 그 프로젝트의 내 일지 (임시 저장 제외), 작성 순 */
     List<Journal> findByAuthorIdAndProjectIdAndStatusNotOrderByCreatedAtAsc(Long authorId, Long projectId, Status status);
 
 }
