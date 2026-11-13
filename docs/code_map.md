@@ -279,7 +279,7 @@
 ### journal/ai/AiClient
 - AI 호출은 이 인터페이스로만. 실패는 `AiClientException`
 - 구현 선택: `app.ai.api-key`(`AI_API_KEY`)가 있으면 `GeminiAiClient`, 비어 있으면 `FakeAiClient`
-- `GeminiAiClient`: `generateContent`를 JSON 응답 모드(`responseSchema`)로 호출. 모델은 `app.ai.model`(`AI_MODEL`, 기본 gemini-2.5-flash-lite). 연결 5초·응답 30초 제한. 목록에 없는 태그는 버림(최대 3개), 원문이 빈 칸(again·memo)은 정리본도 비움, 원문은 로그에 안 남김
+- `GeminiAiClient`: `generateContent`를 JSON 응답 모드(`responseSchema`)로 호출. 모델은 `app.ai.model`(`AI_MODEL`, 기본 gemini-3.5-flash-lite). 연결 5초·응답 30초 제한. 목록에 없는 태그는 버림(최대 3개), 원문이 빈 칸(again·memo)은 정리본도 비움, 원문은 로그에 안 남김
 - `GeminiPrompts`: 지시문 (이름 → `⟦팀원⟧`, 내용 지어내지 않기, 제목 한 줄, 태그 1~3개, 보완 질문은 처음만)
 - `FakeAiClient`: 고정 제목·태그·보완 질문, 정리본 = 원문 그대로(이름 안 가림)
 - 테스트는 `build.gradle`에서 `AI_API_KEY`를 비워서 항상 Fake (PC에 키가 있어도 실제 호출 안 함)

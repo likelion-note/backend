@@ -42,7 +42,7 @@ public class GeminiAiClient implements AiClient {
     @Autowired
     public GeminiAiClient(ObjectMapper objectMapper,
                           @Value("${app.ai.api-key}") String apiKey,
-                          @Value("${app.ai.model:gemini-2.5-flash-lite}") String model) {
+                          @Value("${app.ai.model:gemini-3.5-flash-lite}") String model) {
         this(RestClient.builder().baseUrl(BASE_URL).requestFactory(timeoutFactory()).build(),
                 objectMapper, apiKey, model);
     }
