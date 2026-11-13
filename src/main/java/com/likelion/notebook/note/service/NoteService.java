@@ -5,6 +5,7 @@ import com.likelion.notebook.global.exception.BusinessException;
 import com.likelion.notebook.journal.entity.Journal;
 import com.likelion.notebook.journal.entity.JournalBody;
 import com.likelion.notebook.note.dto.NoteDetailResponse;
+import com.likelion.notebook.note.dto.NoteHelpResponse;
 import com.likelion.notebook.note.entity.NoteReaction;
 import com.likelion.notebook.journal.repository.JournalRepository;
 import com.likelion.notebook.journal.service.AuthorLabels;
@@ -127,6 +128,24 @@ public class NoteService {
             score++;
         }
         return score;
+    }
+
+    /**
+     * 10. 도움돼요 토글. note_reaction.helped만 바꿈 (행이 없으면 만들고 true → 읽음도 같이 생김).
+     * 볼 수 없으면 404, 내 노트면 403. 알림은 시연 제외
+     */
+    @Transactional
+    public NoteHelpResponse toggleHelp(Long userId, Long journalId) {
+        User viewer = findViewer(userId);
+        Journal note = findVisible(journalId, viewer);
+        if (note.isWrittenBy(viewer.getId())) {
+            throw new BusinessException(ErrorCode.FORBIDDEN, "내 노트에는 누를 수 없어요");
+        }
+        NoteReaction reaction = reactionRepository.findByUserIdAndJournalId(viewer.getId(), note.getId())
+                .orElseGet(() -> reactionRepository.save(new NoteReaction(viewer, note)));
+        boolean helped = reaction.toggleHelp();
+        reactionRepository.flush();
+        return new NoteHelpResponse(helped, reactionRepository.countByJournalIdAndHelpedTrue(note.getId()));
     }
 
     /** 볼 수 없거나 없거나 공개 전이면 전부 같은 404 (있다는 것도 알리지 않음) */

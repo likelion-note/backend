@@ -8,12 +8,14 @@ import com.likelion.notebook.note.dto.NoteFilter;
 import com.likelion.notebook.note.dto.NoteFilter.CohortFilter;
 import com.likelion.notebook.note.dto.NoteFilter.NoteSort;
 import com.likelion.notebook.note.dto.NoteDetailResponse;
+import com.likelion.notebook.note.dto.NoteHelpResponse;
 import com.likelion.notebook.note.dto.NoteListResponse;
 import com.likelion.notebook.note.service.NoteService;
 import com.likelion.notebook.user.entity.Part;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,5 +46,11 @@ public class NoteController {
     @GetMapping("/{id}")
     public ApiResponse<NoteDetailResponse> detail(@CurrentUser Long userId, @PathVariable Long id) {
         return ApiResponse.ok(noteService.detail(userId, id));
+    }
+
+    /** 10. 도움돼요 (누를 때마다 켜짐/꺼짐, Body 없음) */
+    @PostMapping("/{id}/help")
+    public ApiResponse<NoteHelpResponse> help(@CurrentUser Long userId, @PathVariable Long id) {
+        return ApiResponse.ok(noteService.toggleHelp(userId, id));
     }
 }

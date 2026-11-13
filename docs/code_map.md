@@ -305,6 +305,35 @@
 
 ---
 
+## note/ (B)
+
+### journal/repository/JournalRepository — 노트 공개 조건 (`VISIBLE_NOTE`)
+- **익명성 규칙의 핵심. 노트를 보여주는 곳은 전부 `findVisibleNotes` / `findVisibleNote`로만 가져오기**
+- APPROVED 이고 (내 노트) 또는 (지난 기수) 또는 (같은 기수 + NOW + 미분류이거나 내가 그 프로젝트에 배정된 적 없음 — `ProjectAssignment`를 `not exists`로, 지난 배정 포함)
+- 같은 기수 NEXT, 다음 기수, 같은(지난) 팀원 노트는 안 나옴
+
+### note/service/NoteService
+- `list` (8번): 공개 노트 전부 → 서버에서 cohort·part·timing·tag 필터 + 검색 → 정렬(NEW = 공개 시각 `reviewedAt` 최신, READS·HELPS = 많은 순 → 최신) → 페이징(size 1~50). 읽음·도움돼요 수는 쿼리 한 번(`countByJournalIds`)
+- `detail` (9번): 볼 수 없으면 404 "노트를 찾을 수 없어요"(없음·미승인과 구분 안 함). 처음 열면 `NoteReaction` 생성(작성자 제외). `similarNotes` 최대 2개 = 볼 수 있는 노트 중 점수(겹치는 태그×2 + 같은 파트 1 + 같은 시점 1) > 0, 같으면 도움돼요 순
+- `toggleHelp` (10번): 404 → 내 노트면 403 → 행 없으면 만들고(읽음도 생김) `helped` 뒤집기
+- `authorLabel`: 같은 기수(내 노트 포함)면 `AuthorLabels.sameCohort`, 지난 기수면 `pastCohort`(팀 가명)
+
+### note/service/NoteSearch
+- 검색어: 공백 빼고 비교, 여러 단어 모두 포함, `#`로 시작하면 태그(화면 이름·값). 대상 = 제목 + 정리본 4칸 + 태그 화면 이름. **authorLabel·팀 가명·프로젝트 이름은 대상 아님**
+- 미리보기: 정리본 "넘긴 방법" 앞 80자 + "…", 없으면 "막힌 것"
+
+### note/controller/NoteController
+| API | 화면 |
+|---|---|
+| `GET /api/notes?q=&cohort=&part=&timing=&tag=&sort=&page=&size=` | 노트 게시판. 파트 A 회의 도우미 "관련 노트"는 `?tag=MEETING_RUN&size=2` 등으로 |
+| `GET /api/notes/{id}` | 노트 상세 |
+| `POST /api/notes/{id}/help` | 도움돼요 토글 |
+
+### note/dto/NoteCard
+- 8번 카드, 9번 similarNotes, 회의 도우미 관련 노트가 같은 모양. 작성자 id·이름·projectId 없음
+
+---
+
 ## 설정
 
 ### application.yml
@@ -338,4 +367,8 @@
 | journal/ai/AiClientSelectionTest | 키가 있으면 GeminiAiClient 주입 |
 | journal/JournalMineTest | 상태별 개수·최근 수정 순·정리 전 title null·미분류 projectTitle null, 반응은 내 공개 노트만, journalBanner·noteImpact, 401 |
 | journal/JournalDetailTest | 원문·정리본·사유·projectId, 정리 전 summary null, 403/404, /me·/form이 상세로 안 잡힘 |
+| note/NoteListTest | 공개 조건(지금·지난 팀원, 같은 기수 NEXT, 다음 기수, 미승인 숨김), 팀 가명은 지난 기수만, 팀 이름 검색 안 됨, 띄어쓰기 무시·여러 단어·#태그, 필터·정렬·isRead·페이징·400 |
+| note/NoteDetailTest | 정리본·라벨, 읽음 1회·작성자 제외, 숨김 대상 전부 404(기록도 안 남음), similarNotes 점수순·숨김 노트 제외 |
+| note/NoteHelpTest | 토글·개수, 바로 눌러도 읽음 생김, 내 노트 403, 팀원 노트 404 |
+| note/NoteFixtures | 노트 테스트 데이터 도우미 (승인된 노트, 반응) |
 | journal/JournalSubmitTest | 태그 빼기·전부 빼기, 새 태그 400, 정리본 없음 400, 중복 요청 400, 돌려받은 사유 지움, tags 없음 400, 403 |
