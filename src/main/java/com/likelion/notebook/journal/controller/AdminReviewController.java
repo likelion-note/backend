@@ -3,10 +3,12 @@ package com.likelion.notebook.journal.controller;
 import com.likelion.notebook.global.auth.AdminChecker;
 import com.likelion.notebook.global.auth.CurrentUser;
 import com.likelion.notebook.global.common.ApiResponse;
+import com.likelion.notebook.journal.dto.ReviewDetailResponse;
 import com.likelion.notebook.journal.dto.ReviewListResponse;
 import com.likelion.notebook.journal.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,5 +25,11 @@ public class AdminReviewController {
     @GetMapping
     public ApiResponse<ReviewListResponse> list(@CurrentUser Long userId) {
         return ApiResponse.ok(reviewService.list(adminChecker.require(userId)));
+    }
+
+    /** 12. 검토 상세 */
+    @GetMapping("/{journalId}")
+    public ApiResponse<ReviewDetailResponse> detail(@CurrentUser Long userId, @PathVariable Long journalId) {
+        return ApiResponse.ok(reviewService.detail(adminChecker.require(userId), journalId));
     }
 }

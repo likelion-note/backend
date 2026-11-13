@@ -1,5 +1,8 @@
 package com.likelion.notebook.journal.service;
 
+import com.likelion.notebook.global.common.ErrorCode;
+import com.likelion.notebook.global.exception.BusinessException;
+import com.likelion.notebook.journal.dto.ReviewDetailResponse;
 import com.likelion.notebook.journal.dto.ReviewListResponse;
 import com.likelion.notebook.journal.entity.Journal;
 import com.likelion.notebook.journal.entity.JournalEnums.Status;
@@ -41,6 +44,20 @@ public class ReviewService {
                 .map(ReviewListResponse.Recent::of)
                 .toList();
         return new ReviewListResponse(pending.size(), pending, recent);
+    }
+
+    /** 12. 검토 상세: 공개될 정리본 그대로 (PENDING 외에 처리된 것도 볼 수 있음 — recent에서 열기) */
+    @Transactional(readOnly = true)
+    public ReviewDetailResponse detail(User admin, Long journalId) {
+        return ReviewDetailResponse.of(findReviewable(admin, journalId));
+    }
+
+    /** 없음·임시 저장·다른 기수는 전부 404 "일지를 찾을 수 없어요" */
+    Journal findReviewable(User admin, Long journalId) {
+        return journalRepository.findById(journalId)
+                .filter(j -> j.getStatus() != Status.DRAFT)
+                .filter(j -> sameCohort(j, admin))
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND, "일지를 찾을 수 없어요"));
     }
 
     boolean isOnlyAdmin(User admin) {
