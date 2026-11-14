@@ -44,7 +44,7 @@
 
 - A 완료: 구글 로그인 + 초대코드 가입 + JWT(`Authorization: Bearer`), local 전용 `X-User-Id`(`app.auth.dev-mode`), `/api/me`, 배정, 홈·가이드, 운영진 멤버·일정, 회의. 자세한 건 `docs/code_map.md`
 - `ErrorCode` 공통 5개로 정리 완료 (A). 문구는 `new BusinessException(code, message)`로 전달
-- B(journal·note): 엔티티는 확정 ERD에 맞춤 완료. 일지 작성 API 1~3번은 PR #9 (리뷰 중)
+- B(journal·note): API 1~16번 구현 완료 (일지 작성·정리·검토 요청, 내 기록, 노트, 운영진 검토, 포트폴리오). 홈 B 필드 메서드(`journalBanner`, `noteImpact`) 준비 완료. 자세한 건 `docs/code_map.md`
 - `./gradlew test` 통과. `gradlew` 래퍼 있음
 - **로컬 JDK는 17 사용.** PC에 JDK 27도 설치돼 있지만 Gradle 래퍼(9.3.0)는 JDK 17로만 확인함. 빌드가 이상하면 `JAVA_HOME`이 jdk-17을 가리키는지 먼저 확인
 - **A 영역 엔티티는 아직 확정 ERD와 다 맞지는 않음** → 아래 "ERD 맞추기" 참고
@@ -130,13 +130,13 @@ A(언니)는 배포(AWS EC2)·CI/CD도 담당. 기능 폴더 안은 `controller 
 
 정해진 것: 일지 필수(넘긴 방법도 필수), 자동 저장(입력 멈추고 3초 뒤), 초대코드 만료(`expiresAt` NULL = 만료 없음, `isUsable()`에서 체크), 회의 불러오기(지난 7일, `GET /api/meetings?days=7`). 추천 점수는 추천 노트가 시연 제외라 보류.
 
-아직 정해지지 않은 것: 운영진이 1명일 때 검토, 미분류 일지 포트폴리오.
+구현하며 정한 것: 운영진은 자기 기수 일지만 검토, 본인 일지는 못 하지만 그 기수 운영진이 1명뿐이면 허용. 미분류 일지는 포트폴리오에서 제외.
 
 ## 다음 할 일
 
 1. ~~`./gradlew test` 통과시키기~~ 완료
 2. ~~A: 구글 로그인 + 초대코드 → JWT, local 전용 `X-User-Id`~~ 완료
 3. 엔티티를 확정 ERD에 맞추기 (위 "ERD 맞추기", 각자 영역. B는 완료)
-4. B 순서: ~~일지 작성·자동 저장(1~3번)~~ PR #9 → 일지 정리(4번) → 검토 요청(5번) → 내 기록·내 일지 상세(6~7번) → 노트(8~10번) → 검토(11~14번) → 포트폴리오(15~16번). 홈 B 필드(`journalBanner`, `noteImpact`) 메서드도 준비
+4. ~~B API 1~16번 + 홈 B 필드 메서드~~ 완료
 5. A 파트 API 명세를 `docs/api_spec.md`로 옮기기 (프론트와 공유)
 6. 시드 로더: `guide.json`, `meeting-helper.json`은 시작 시 메모리로, `demo-data.json`은 `local` 프로필에서만 DB로
