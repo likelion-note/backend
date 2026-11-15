@@ -207,12 +207,14 @@
 ### guide/service/EventService (FN-ADM-04)
 - `list`: 기수 일정 날짜순
 - `create`: PROJECT_START는 기수마다 하나 (중복이면 INVALID_INPUT). 저장 즉시 모든 홈에 반영(홈이 매번 계산)
+- `delete`: 본인 기수 일정만 (다른 기수·없음 404 "일정을 찾을 수 없어요"). 홈 주차·D-day, 일지 기본 시점에 바로 반영. 이미 쓴 일지 timing은 그대로
 
 ### guide/controller/AdminEventController
 | API | 화면 |
 |---|---|
 | `GET /api/admin/events` | SCR-ADM-07 |
 | `POST /api/admin/events` body `{name, type, eventDate}` | SCR-ADM-07 |
+| `DELETE /api/admin/events/{eventId}` | SCR-ADM-07 일정 지우기 |
 
 ### guide/LocalEventSeeder
 - local에서만 demo-data.json 일정 5개 등록 (시작 10/19, 세션 10/29, 중간발표 11/08, 해커톤 11/21, 데모데이 12/05)
@@ -273,6 +275,7 @@
 - `submit` (5번 API): `Journal.submit(keptTags)` → 태그는 빼기만(새 태그면 400), PENDING으로, 돌려받은 사유 지움
 - `getMine` (6번 API): 내 일지 전부(프로젝트 fetch join, `updatedAt` 최신순) + 상태별 개수 + `noteImpact`
 - `getDetail` (7번 API): 원문 + 정리본(정리 전이면 summary null) + projectId. 남의 일지 403 "내 일지만 볼 수 있어요"
+- `delete` (내 일지 삭제): DRAFT·REJECTED만. PENDING 400 "검토 중인 일지는 지울 수 없어요", APPROVED 400 "공개된 노트는 지울 수 없어요", 남의 일지 403. 두 상태는 note_reaction이 없어서 일지 행만 지움
 - **파트 A 홈에서 부를 메서드**
   - `journalBanner(userId)` → `{rejected, pending}` 내 일지 개수
   - `noteImpact(userId)` → `{readCount, helpCount}` 내 공개(APPROVED) 노트의 `note_reaction` 합계 (행 = 읽음, `helped` = 도움돼요)
@@ -302,6 +305,7 @@
 | `POST /api/journals/{id}/submit` body `{tags}` | SCR-JOUR-02 검토 요청 |
 | `GET /api/journals/me` | 내 기록 탭 (통계 + 목록) |
 | `GET /api/journals/{id}` | 내 기록 → 일지 열기 / 이어 쓰기 |
+| `DELETE /api/journals/{id}` | 내 기록 → 일지 지우기 (임시 저장·돌려받음만) |
 
 ### global/exception/GlobalExceptionHandler (B가 추가)
 - `HttpMessageNotReadableException`(깨진 JSON, 값 목록에 없는 enum), `MethodArgumentTypeMismatchException`(경로 변수 타입) → 400 INVALID_INPUT. 전에는 500으로 나갔음
@@ -399,6 +403,8 @@
 | admin/AdminMemberUnassignedTest | 배정 안 된 운영진이 배정 전에 type ADMIN으로 보임, 운영 분류에 배정 → OPS 파트·운영 그룹으로 |
 | admin/AdminProjectDeleteTest | 빈 분류 삭제·배정된 사람 배정 전으로·다른 분류 이력 유지, 일지(임시 저장)·요약 있으면 400, 다른 기수 404, 아기사자 403, 운영 분류 삭제, 지운 팀 글자 재사용 |
 | global/ErrorResponseTest | 없는 주소·없는 메서드 404 "없는 API예요", JSON 아닌 body 400 |
+| guide/EventDeleteTest | 일정 삭제 → 목록·일지 기본 시점(DURING → AFTER) 바로 반영, 다른 기수 404, 아기사자 403 |
+| journal/JournalDeleteTest | DRAFT·REJECTED 삭제·내 기록에서 빠짐, PENDING·APPROVED 400, 남의 일지 403, 없음 404, 401 |
 | user/AssignmentServiceTest | 기본 파트 복사, 재배정 이력, 배정 해제, 파트 없음 에러, 운영 분류는 OPS |
 | journal/JournalFormTest | 지금 배정이 기본값·지난 배정도 목록에, 배정 전 미분류+기본 파트, 일정 없는 기수 시점 null, 401 |
 | journal/JournalWriteTest | 일지 생성, 빈 body 미분류, 남의 프로젝트 400, 잘못된 enum 400, 2000자 초과 400, 401 |

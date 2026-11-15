@@ -138,6 +138,23 @@ public class JournalService {
                 result.followUpQuestion());
     }
 
+    /**
+     * 내 일지 삭제. 임시 저장(DRAFT)·돌려받음(REJECTED)만.
+     * 검토 중은 운영진이 보고 있어서, 공개된 노트는 공개 취소·삭제가 시연 제외라 막음.
+     * 이 두 상태는 note_reaction이 없어서(노트가 공개된 적 없음) 일지 행만 지우면 됨
+     */
+    @Transactional
+    public void delete(Long userId, Long journalId) {
+        Journal journal = findMine(userId, journalId, "내 일지만 지울 수 있어요");
+        if (journal.getStatus() == Status.PENDING) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "검토 중인 일지는 지울 수 없어요");
+        }
+        if (journal.getStatus() == Status.APPROVED) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "공개된 노트는 지울 수 없어요");
+        }
+        journalRepository.delete(journal);
+    }
+
     /** 5. 검토 요청. 태그를 최종 확인하고 PENDING으로 (규칙은 Journal.submit) */
     @Transactional
     public JournalSaveResponse submit(Long userId, Long journalId, JournalSubmitRequest request) {
