@@ -9,4 +9,7 @@ public interface PortfolioSummaryRepository extends JpaRepository<PortfolioSumma
 
     /** 하루 5회 제한: from = 오늘 0시(KST) */
     long countByUserIdAndCreatedAtGreaterThanEqual(Long userId, LocalDateTime from);
+
+    /** 분류 삭제 막기: 이 분류로 만든 요약이 있는지 */
+    boolean existsByProjectId(Long projectId);
 }

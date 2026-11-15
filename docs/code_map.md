@@ -139,11 +139,12 @@
 | 메서드 | 용도 |
 |---|---|
 | findByGoogleSub | 로그인 시 회원 판별 |
-| findUnassigned | 지금 배정이 없는 아기사자, 최근 가입순 (운영진 "배정 전" 그룹) |
+| findUnassigned | 지금 배정이 없는 사람(아기사자·운영진), 최근 가입순 (운영진 "배정 전" 그룹. 운영진도 여기서 골라 운영 분류에 배정) |
 | countByCohortAndType | 운영진 수 → 2명 이상이면 본인 일지 검토 금지 |
 
 ### user/service/ProjectService (FN-ADM-02)
-- `create`: 운영진 본인 기수에 생성. TEAM은 teamLetter를 A, B, C… 자동 부여 (기수 안 TEAM 개수 기준), OPS는 null
+- `create`: 운영진 본인 기수에 생성. TEAM은 teamLetter를 A, B, C… 자동 부여 (기수 안에서 **안 쓴 첫 글자**. 지운 글자는 다시 씀), OPS는 null
+- `delete`: 잘못 만든 분류 지우기. 그 분류로 쓴 일지(임시 저장 포함)·포트폴리오 요약이 있으면 400 "일지가 있는 분류는 지울 수 없어요" (팀원 숨김·팀 가명이 분류에 기대기 때문). 다른 기수 404. 배정은 이력까지 같이 지움 → 지금 배정이던 사람은 배정 전으로
 - `list`: 기수의 분류 + 지금 멤버 수
 
 ### user/service/MemberService (FN-ADM-03)
@@ -157,6 +158,7 @@
 |---|---|
 | `GET /api/admin/projects` | SCR-ADM-04, 05 |
 | `POST /api/admin/projects` body `{title, kind}` | SCR-ADM-06 |
+| `DELETE /api/admin/projects/{projectId}` | 분류 지우기 (일지 있으면 400) |
 | `GET /api/admin/members` | SCR-ADM-04 |
 | `PUT /api/admin/members/{id}/assignment` body `{projectId, part?}` | SCR-ADM-05 |
 | `DELETE /api/admin/members/{id}/assignment` | 배정 해제 |
@@ -392,6 +394,8 @@
 | admin/AdminFlowTest | 운영진 가입 → 프로젝트(팀 글자 A·B, 운영 null) → 아기사자 가입 → 기본 파트 → 배정 → 아기사자 홈에 PM 할 일. 아기사자의 운영진 API 403. 일정 등록, PROJECT_START 중복 400 |
 | meeting/MeetingTest | 템플릿 4종, 빈 줄 제거·공유 원문, 최근 7일 필터, 남의 회의 404, 삭제, 둘 다 비면 400 |
 | guide/HomeGuideTest | 2주차·D-12·W1_2 계산, 할 일 체크/해제 반영, 배정 전 빈 할 일, 운영진 403, 다른 파트·주차 가이드 |
+| admin/AdminMemberUnassignedTest | 배정 안 된 운영진이 배정 전에 type ADMIN으로 보임, 운영 분류에 배정 → OPS 파트·운영 그룹으로 |
+| admin/AdminProjectDeleteTest | 빈 분류 삭제·배정된 사람 배정 전으로·다른 분류 이력 유지, 일지(임시 저장)·요약 있으면 400, 다른 기수 404, 아기사자 403, 운영 분류 삭제, 지운 팀 글자 재사용 |
 | user/AssignmentServiceTest | 기본 파트 복사, 재배정 이력, 배정 해제, 파트 없음 에러, 운영 분류는 OPS |
 | journal/JournalFormTest | 지금 배정이 기본값·지난 배정도 목록에, 배정 전 미분류+기본 파트, 일정 없는 기수 시점 null, 401 |
 | journal/JournalWriteTest | 일지 생성, 빈 body 미분류, 남의 프로젝트 400, 잘못된 enum 400, 2000자 초과 400, 401 |

@@ -40,6 +40,9 @@ public interface JournalRepository extends JpaRepository<Journal, Long> {
     @Query("select j from Journal j left join fetch j.project where j.author.id = :authorId order by j.updatedAt desc, j.id desc")
     List<Journal> findMineWithProject(Long authorId);
 
+    /** 분류 삭제 막기: 이 분류로 쓴 일지가 있는지 (임시 저장 포함) */
+    boolean existsByProjectId(Long projectId);
+
     /** 홈 배너: 상태별 내 일지 개수 */
     long countByAuthorIdAndStatus(Long authorId, Status status);
 
