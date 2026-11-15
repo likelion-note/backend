@@ -5,7 +5,6 @@ import com.likelion.notebook.global.exception.BusinessException;
 import com.likelion.notebook.guide.dto.admin.EventCreateRequest;
 import com.likelion.notebook.guide.dto.admin.EventResponse;
 import com.likelion.notebook.guide.entity.Event;
-import com.likelion.notebook.guide.entity.Event.EventType;
 import com.likelion.notebook.guide.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,10 +26,6 @@ public class EventService {
 
     @Transactional
     public EventResponse create(Integer cohort, EventCreateRequest request) {
-        if (request.type() == EventType.PROJECT_START
-                && eventRepository.existsByCohortAndType(cohort, EventType.PROJECT_START)) {
-            throw new BusinessException(ErrorCode.INVALID_INPUT, "프로젝트 시작 일정은 기수마다 하나예요");
-        }
         Event saved = eventRepository.save(Event.builder()
                 .cohort(cohort)
                 .name(request.name().strip())

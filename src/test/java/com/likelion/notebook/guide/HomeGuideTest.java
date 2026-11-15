@@ -1,5 +1,8 @@
 package com.likelion.notebook.guide;
 
+import com.likelion.notebook.guide.entity.Event;
+import com.likelion.notebook.guide.entity.Event.EventType;
+import com.likelion.notebook.guide.repository.EventRepository;
 import com.likelion.notebook.user.entity.Part;
 import com.likelion.notebook.user.entity.ProjectCategory;
 import com.likelion.notebook.user.entity.ProjectCategory.ProjectKind;
@@ -15,6 +18,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -35,6 +40,7 @@ class HomeGuideTest {
     @Autowired UserRepository userRepository;
     @Autowired ProjectCategoryRepository projectRepository;
     @Autowired AssignmentService assignmentService;
+    @Autowired EventRepository eventRepository;
 
     @Test
     void 배정된_아기사자_홈() throws Exception {
@@ -105,8 +111,53 @@ class HomeGuideTest {
                 .andExpect(jsonPath("$.data.part").value("DESIGN"))
                 .andExpect(jsonPath("$.data.stage").value("W3"))
                 .andExpect(jsonPath("$.data.currentStage").value("W2"))
-                .andExpect(jsonPath("$.data.stages.length()").value(6))
+                .andExpect(jsonPath("$.data.stages.length()").value(3))
                 .andExpect(jsonPath("$.data.tasks").isNotEmpty());
+    }
+
+    @Test
+    void 주제_공개가_여러_번이면_가장_최근_것이_1주차() throws Exception {
+        // 15기: 9/1, 10/20 주제 공개 → 오늘(10/27)은 10/20 기준 2주차
+        event(15, "아이디어톤 주제 공개", EventType.PROJECT_START, "2026-09-01");
+        event(15, "해커톤 주제 공개", EventType.PROJECT_START, "2026-10-20");
+        event(15, "해커톤 주제 공개(다음)", EventType.PROJECT_START, "2026-11-20"); // 아직 안 옴 → 무시
+        event(15, "해커톤 본선", EventType.HACKATHON, "2026-11-10");
+        User user = member("multi-1", 15);
+
+        mvc.perform(get("/api/home").header("X-User-Id", user.getId()))
+                .andExpect(jsonPath("$.data.stage.week").value(2))
+                .andExpect(jsonPath("$.data.stage.stage").value("W2"));
+    }
+
+    @Test
+    void 사주차부터는_가이드가_비어_있다() throws Exception {
+        // 16기: 9/30 주제 공개 → 오늘(10/27)은 4주차. 본선 남아 있어 프로젝트 기간이지만 할 일 없음
+        event(16, "중커톤 주제 공개", EventType.PROJECT_START, "2026-09-30");
+        event(16, "중커톤 본선", EventType.HACKATHON, "2026-11-30");
+        User user = member("w4-1", 16);
+        ProjectCategory team = projectRepository.save(ProjectCategory.builder()
+                .title("16기 팀").kind(ProjectKind.TEAM).cohort(16).build());
+        assignmentService.changeDefaultPart(user.getId(), Part.PM);
+        assignmentService.assign(user.getId(), team.getId(), null);
+
+        mvc.perform(get("/api/home").header("X-User-Id", user.getId()))
+                .andExpect(jsonPath("$.data.stage.week").value(4))
+                .andExpect(jsonPath("$.data.stage.stage").doesNotExist())
+                .andExpect(jsonPath("$.data.stage.inProjectPeriod").value(true))
+                .andExpect(jsonPath("$.data.tasks").isEmpty());
+        mvc.perform(get("/api/guide").header("X-User-Id", user.getId()))
+                .andExpect(jsonPath("$.data.currentStage").doesNotExist())
+                .andExpect(jsonPath("$.data.stage").value("W1"));
+    }
+
+    private void event(int cohort, String name, EventType type, String date) {
+        eventRepository.save(Event.builder().cohort(cohort).name(name).type(type)
+                .eventDate(LocalDate.parse(date)).build());
+    }
+
+    private User member(String sub, int cohort) {
+        return userRepository.save(User.builder().email(sub + "@x.com").googleSub(sub)
+                .name("민수").type(UserType.MEMBER).cohort(cohort).build());
     }
 
     private User member(String sub) {

@@ -1,17 +1,17 @@
 # 시드 데이터
 
-데모 앱(멋사수첩 데모 앱.html)에 들어 있던 데이터를 백엔드 enum 이름에 맞춰 옮긴 파일이에요. 아직 DB에 넣는 코드(로더)는 없어요.
+데모 앱(멋사수첩 데모 앱.html)에 들어 있던 데이터를 백엔드 enum 이름에 맞춰 옮긴 파일이에요. `guide.json`은 `GuideSeed`, `meeting-helper.json`은 `MeetingSeed`가 시작할 때 읽어요.
 
 | 파일 | 내용 | 쓰는 곳 | 어떻게 쓰나 |
 |---|---|---|---|
-| `guide.json` | 파트 × 주차 할 일 69개, 주차별 운영진 한마디, 지난 기수 자료 6개 | 홈 오늘 할 일, 파트 가이드 (FN-GUIDE-01~03) | **실제 서비스 데이터.** DB에 안 넣고 앱 시작할 때 읽어서 메모리에 두면 충분 |
+| `guide.json` | 파트 × 주차 할 일 38개(1~3주차), 주차별 운영진 한마디, 지난 기수 자료 6개 | 홈 오늘 할 일, 파트 가이드 (FN-GUIDE-01~03) | **실제 서비스 데이터.** DB에 안 넣고 앱 시작할 때 읽어서 메모리에 두면 충분 |
 | `meeting-helper.json` | 회의 종류 4개별 질문 3개 + 막힐 때 팁 | 회의 도우미 (FN-MEET-01, 02) | **실제 서비스 데이터.** guide.json과 같은 방식 |
 | `demo-data.json` | 사용자 20, 프로젝트 12, 일지 27, 회의 3, 일정 5, 초대코드 3 | 로컬 개발, 발표 시연 | **예시 데이터.** `local` 프로필에서만 DB에 넣기. 배포 DB에 넣지 않기 |
 
 ## 규칙
 
 - 값은 전부 백엔드 enum 이름이에요: `Part`(PM, DESIGN, FRONTEND, BACKEND, OPS), `Activity`, `Timing`, `Tag`, `MeetingType`, `EventType`
-- 주차(stage)는 `W1, W2, W3, W4_5, W6, W7`. 4~5주차가 하나로 묶여 있어요
+- 주차(stage)는 `W1, W2, W3`. 주제 공개일(`PROJECT_START`)이 1주차고, 4주차부터는 가이드가 없어요
 - `guide.json`의 `key`(예: `PM-W2-0`)가 `GuideCheck.itemKey`로 쓰여요. 항목 순서를 바꾸면 기존 체크가 엉키니, 고칠 땐 맨 뒤에 추가하기
 - `demo-data.json`의 `ref`는 파일 안에서 서로 연결하는 키예요 (DB id 아님)
 - 일지 `summary.body`에서 `⟦팀원 A⟧`처럼 `⟦ ⟧`로 감싼 부분은 AI가 가린 이름이에요. 화면 강조 표시용
