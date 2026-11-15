@@ -12,11 +12,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByGoogleSub(String googleSub);
 
-    /** 배정 전 아기사자 (지금 배정이 없는 사람). 방금 가입한 사람이 맨 위 */
+    /**
+     * 배정 전 (지금 배정이 없는 사람). 아기사자·운영진 모두 — 운영진도 여기서 골라 운영 분류에 배정.
+     * 방금 가입한 사람이 맨 위
+     */
     @Query("""
             select u from User u
             where u.cohort = :cohort
-              and u.type = com.likelion.notebook.user.entity.UserType.MEMBER
               and not exists (select a from ProjectAssignment a where a.user = u and a.current = true)
             order by u.createdAt desc
             """)
