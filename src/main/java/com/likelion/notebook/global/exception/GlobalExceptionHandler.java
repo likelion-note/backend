@@ -3,12 +3,18 @@ package com.likelion.notebook.global.exception;
 import com.likelion.notebook.global.common.ApiResponse;
 import com.likelion.notebook.global.common.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @Slf4j
 @RestControllerAdvice
@@ -33,6 +39,22 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
     public ResponseEntity<ApiResponse<Void>> handleUnreadable(Exception e) {
         return ResponseEntity.badRequest().body(ApiResponse.fail(ErrorCode.INVALID_INPUT));
+    }
+
+    /** 필수 쿼리 파라미터 빠짐, JSON이 아닌 body */
+    @ExceptionHandler({MissingServletRequestParameterException.class, HttpMediaTypeNotSupportedException.class})
+    public ResponseEntity<ApiResponse<Void>> handleBadRequest(Exception e) {
+        return ResponseEntity.badRequest().body(ApiResponse.fail(ErrorCode.INVALID_INPUT));
+    }
+
+    /**
+     * 없는 주소, 또는 주소는 있는데 그 메서드가 없음 (예: 배포 서버에 아직 없는 API).
+     * 전에는 500 "서버 오류"로 나와서 서버 오류와 구분이 안 됐음. 에러 코드는 5개만 쓰므로 405도 404 NOT_FOUND로
+     */
+    @ExceptionHandler({NoResourceFoundException.class, HttpRequestMethodNotSupportedException.class})
+    public ResponseEntity<ApiResponse<Void>> handleNoApi(Exception e, HttpServletRequest request) {
+        log.warn("없는 API: {} {}", request.getMethod(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.fail(ErrorCode.NOT_FOUND, "없는 API예요"));
     }
 
     @ExceptionHandler(Exception.class)
