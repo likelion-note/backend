@@ -9,5 +9,4 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> findByCohortOrderByEventDateAsc(Integer cohort);
 
-    boolean existsByCohortAndType(Integer cohort, Event.EventType type);
 }

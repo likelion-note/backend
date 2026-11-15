@@ -83,7 +83,7 @@ class AdminFlowTest {
     }
 
     @Test
-    void 일정_등록과_프로젝트_시작_중복_방지() throws Exception {
+    void 일정_등록과_주제_공개_여러_번() throws Exception {
         String admin = signup("dev:admin-event:admin2@test.com", "STAF14", "운영진2");
 
         mvc.perform(auth(post("/api/admin/events").contentType(MediaType.APPLICATION_JSON)
@@ -91,10 +91,11 @@ class AdminFlowTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.major").value(true));
 
-        // local 데모 일정에 PROJECT_START가 이미 있음
+        // local 데모 일정에 PROJECT_START가 이미 있어도 더 넣을 수 있음 (아이디어톤·해커톤·중커톤 주제 공개)
         mvc.perform(auth(post("/api/admin/events").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"시작\",\"type\":\"PROJECT_START\",\"eventDate\":\"2026-10-20\"}"), admin))
-                .andExpect(status().isBadRequest());
+                        .content("{\"name\":\"해커톤 주제 공개\",\"type\":\"PROJECT_START\",\"eventDate\":\"2026-12-01\"}"), admin))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.major").value(false));
 
         mvc.perform(auth(get("/api/admin/events"), admin))
                 .andExpect(jsonPath("$.data[*].name", hasItem("아이디어톤")));

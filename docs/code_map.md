@@ -177,15 +177,15 @@
 
 ### guide/seed/GuideSeed
 - `seed/guide.json`을 앱 시작 시 읽어 메모리에 둠 (DB에 안 넣음)
-- stages: 주차 구간 6개(W1, W2, W3, W4_5, W6, W7) + 구간별 운영진 한마디(opTip)
-- items: 파트 × 구간 할 일 69개. `key`(예: `PM-W2-0`)가 GuideCheck.itemKey. 순서 바꾸면 기존 체크가 엉키니 추가는 맨 뒤에
+- stages: 주차 구간 3개(W1, W2, W3) + 구간별 운영진 한마디(opTip). 주제 공개일이 1주차
+- items: 파트 × 구간 할 일 38개(PM 주 3~4개, 나머지 주 3개). `key`(예: `PM-W2-0`)가 GuideCheck.itemKey. 순서 바꾸면 기존 체크가 엉키니 추가는 맨 뒤에
 - docs: 지난 기수 자료 6개. 할 일의 `action.type = DOC`이 `docKey`로 가리킴
 - action.type = MEETING이면 `meetingType`으로 회의 도우미 이동
 
 ### guide/service/StageService (FN-MATCH-01)
 - 기수의 일정(events)과 오늘 날짜로 계산. 저장하지 않음
-- 주차: PROJECT_START 일정이 1주차. 시작 전이면 null
-- 구간: 1→W1, 2→W2, 3→W3, 4·5→W4_5, 6→W6, 7 이상→W7
+- 주차: PROJECT_START(주제 공개) 일정이 1주차. 기수에 여러 개 넣을 수 있고 오늘 이전 가장 최근 것 기준 (아이디어톤·해커톤·중커톤마다 다시 1주차). 하나도 안 지났으면 null
+- 구간: 1→W1, 2→W2, 3→W3, 4주차부터 null (week 숫자는 그대로, 할 일·운영진 한마디 없음)
 - D-day: 오늘 이후 가장 가까운 큰 행사(PROJECT_START, SESSION 제외)
 - 다음 정기 세션: D-day와 따로
 - 시점(Timing): 다음 큰 행사까지 14일 이상 W2PLUS, 7~13일 W1_2, 0~6일 DURING, 남은 행사 없으면 AFTER
@@ -206,7 +206,7 @@
 
 ### guide/service/EventService (FN-ADM-04)
 - `list`: 기수 일정 날짜순
-- `create`: PROJECT_START는 기수마다 하나 (중복이면 INVALID_INPUT). 저장 즉시 모든 홈에 반영(홈이 매번 계산)
+- `create`: PROJECT_START도 여러 개 가능. 저장 즉시 모든 홈에 반영(홈이 매번 계산)
 - `delete`: 본인 기수 일정만 (다른 기수·없음 404 "일정을 찾을 수 없어요"). 홈 주차·D-day, 일지 기본 시점에 바로 반영. 이미 쓴 일지 timing은 그대로
 
 ### guide/controller/AdminEventController
@@ -397,7 +397,7 @@
 | 파일 | 확인하는 것 |
 |---|---|
 | auth/AuthFlowTest | 가짜 구글 토큰 → NEED_SIGNUP → 틀린 코드 400 → 가입 → JWT로 /api/me → 재로그인 REGISTERED → 토큰 없이 401 |
-| admin/AdminFlowTest | 운영진 가입 → 프로젝트(팀 글자 A·B, 운영 null) → 아기사자 가입 → 기본 파트 → 배정 → 아기사자 홈에 PM 할 일. 아기사자의 운영진 API 403. 일정 등록, PROJECT_START 중복 400 |
+| admin/AdminFlowTest | 운영진 가입 → 프로젝트(팀 글자 A·B, 운영 null) → 아기사자 가입 → 기본 파트 → 배정 → 아기사자 홈에 PM 할 일. 아기사자의 운영진 API 403. 일정 등록, PROJECT_START 여러 개 등록 |
 | meeting/MeetingTest | 템플릿 4종, 빈 줄 제거·공유 원문, 최근 7일 필터, 남의 회의 404, 삭제, 둘 다 비면 400 |
 | guide/HomeGuideTest | 2주차·D-12·W1_2 계산, 할 일 체크/해제 반영, 배정 전 빈 할 일, 운영진 403, 다른 파트·주차 가이드 |
 | admin/AdminMemberUnassignedTest | 배정 안 된 운영진이 배정 전에 type ADMIN으로 보임, 운영 분류에 배정 → OPS 파트·운영 그룹으로 |
