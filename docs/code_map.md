@@ -305,6 +305,8 @@
 
 ### global/exception/GlobalExceptionHandler (B가 추가)
 - `HttpMessageNotReadableException`(깨진 JSON, 값 목록에 없는 enum), `MethodArgumentTypeMismatchException`(경로 변수 타입) → 400 INVALID_INPUT. 전에는 500으로 나갔음
+- `MissingServletRequestParameterException`(필수 쿼리 빠짐), `HttpMediaTypeNotSupportedException`(JSON 아닌 body) → 400 INVALID_INPUT
+- `NoResourceFoundException`(없는 주소), `HttpRequestMethodNotSupportedException`(주소는 있는데 메서드 없음) → 404 NOT_FOUND "없는 API예요" + 로그에 메서드·주소. 전에는 500 "서버 오류"라 배포 서버에 API가 없는 건지 서버 오류인지 구분이 안 됐음. 에러 코드 5개 규칙 때문에 405도 404로
 
 ---
 
@@ -396,6 +398,7 @@
 | guide/HomeGuideTest | 2주차·D-12·W1_2 계산, 할 일 체크/해제 반영, 배정 전 빈 할 일, 운영진 403, 다른 파트·주차 가이드 |
 | admin/AdminMemberUnassignedTest | 배정 안 된 운영진이 배정 전에 type ADMIN으로 보임, 운영 분류에 배정 → OPS 파트·운영 그룹으로 |
 | admin/AdminProjectDeleteTest | 빈 분류 삭제·배정된 사람 배정 전으로·다른 분류 이력 유지, 일지(임시 저장)·요약 있으면 400, 다른 기수 404, 아기사자 403, 운영 분류 삭제, 지운 팀 글자 재사용 |
+| global/ErrorResponseTest | 없는 주소·없는 메서드 404 "없는 API예요", JSON 아닌 body 400 |
 | user/AssignmentServiceTest | 기본 파트 복사, 재배정 이력, 배정 해제, 파트 없음 에러, 운영 분류는 OPS |
 | journal/JournalFormTest | 지금 배정이 기본값·지난 배정도 목록에, 배정 전 미분류+기본 파트, 일정 없는 기수 시점 null, 401 |
 | journal/JournalWriteTest | 일지 생성, 빈 body 미분류, 남의 프로젝트 400, 잘못된 enum 400, 2000자 초과 400, 401 |
