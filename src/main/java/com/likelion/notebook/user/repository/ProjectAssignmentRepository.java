@@ -2,6 +2,7 @@ package com.likelion.notebook.user.repository;
 
 import com.likelion.notebook.user.entity.ProjectAssignment;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -27,4 +28,9 @@ public interface ProjectAssignmentRepository extends JpaRepository<ProjectAssign
     /** 프로젝트의 지금 멤버 (운영진 멤버 화면) */
     @Query("select a from ProjectAssignment a join fetch a.user where a.project.id = :projectId and a.current = true")
     List<ProjectAssignment> findCurrentMembers(@Param("projectId") Long projectId);
+
+    /** 분류 삭제 시: 그 분류의 배정 전부 (지난 이력 포함). 지금 배정이던 사람은 배정 전으로 */
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("delete from ProjectAssignment a where a.project.id = :projectId")
+    int deleteByProjectId(@Param("projectId") Long projectId);
 }

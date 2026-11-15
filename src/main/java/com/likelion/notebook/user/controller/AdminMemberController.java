@@ -49,6 +49,14 @@ public class AdminMemberController {
         return ApiResponse.ok(projectService.create(admin.getCohort(), request));
     }
 
+    /** 잘못 만든 분류 지우기. 일지가 있는 분류는 400 */
+    @DeleteMapping("/projects/{projectId}")
+    public ApiResponse<Void> deleteProject(@CurrentUser Long userId, @PathVariable Long projectId) {
+        User admin = adminChecker.require(userId);
+        projectService.delete(admin.getCohort(), projectId);
+        return ApiResponse.ok();
+    }
+
     @GetMapping("/members")
     public ApiResponse<MembersResponse> members(@CurrentUser Long userId) {
         User admin = adminChecker.require(userId);
