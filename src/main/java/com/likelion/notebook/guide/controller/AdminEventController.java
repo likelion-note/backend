@@ -9,7 +9,9 @@ import com.likelion.notebook.guide.service.EventService;
 import com.likelion.notebook.user.entity.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,5 +37,13 @@ public class AdminEventController {
     public ApiResponse<EventResponse> create(@CurrentUser Long userId, @Valid @RequestBody EventCreateRequest request) {
         User admin = adminChecker.require(userId);
         return ApiResponse.ok(eventService.create(admin.getCohort(), request));
+    }
+
+    /** 일정 삭제 */
+    @DeleteMapping("/{eventId}")
+    public ApiResponse<Void> delete(@CurrentUser Long userId, @PathVariable Long eventId) {
+        User admin = adminChecker.require(userId);
+        eventService.delete(admin.getCohort(), eventId);
+        return ApiResponse.ok();
     }
 }

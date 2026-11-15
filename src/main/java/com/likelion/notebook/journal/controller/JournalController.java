@@ -12,6 +12,7 @@ import com.likelion.notebook.journal.dto.JournalSummaryResponse;
 import com.likelion.notebook.journal.service.JournalService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,6 +59,13 @@ public class JournalController {
                                                    @PathVariable Long id,
                                                    @Valid @RequestBody JournalSaveRequest request) {
         return ApiResponse.ok(journalService.update(userId, id, request));
+    }
+
+    /** 내 일지 삭제 (DRAFT·REJECTED만) */
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> delete(@CurrentUser Long userId, @PathVariable Long id) {
+        journalService.delete(userId, id);
+        return ApiResponse.ok();
     }
 
     /** 4. AI 정리 (Body 없음) */
